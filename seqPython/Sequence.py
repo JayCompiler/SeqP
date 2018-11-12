@@ -46,7 +46,7 @@ class Sequence:
             for dc in dic.keys():
                 count[i][co]=lis[i][dc]
                 co=co+1
-        return lis,count
+        return lis,count+np.spacing(1)
     
     ## 统计kmer 在所有数据出现的次数,返回字典 tc=O(mn)
     def getkmerCount(self,sequences,dic,k):
@@ -84,7 +84,7 @@ class Sequence:
             for dc in dic.keys():
                 freq[i][co]=lis[i][dc]
                 co=co+1
-        return lis,freq
+        return lis,freq+np.spacing(1)
 
             
 if __name__ =="__main__":
