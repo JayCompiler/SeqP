@@ -66,7 +66,6 @@ class Sequence:
     
     ## 统计词频 输入序列集合，k和字典 序列长度n，序列个数m  tc=O(mn)
     def getSeqfreq(self,sequences,k,dic):
-#        dic=self.getSeqKerSet(sequences,k)
         lis=[]
         for sequence in sequences:
             # 字典的浅复制
