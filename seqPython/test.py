@@ -1,0 +1,26 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Nov  7 14:42:05 2018
+
+@author: Yzi
+"""
+#
+#a=set([1,2,3])
+#b=set([4,2,3])
+#dic={1:2,2:2}
+#c=[{"A":2,"F":4},{2:3,3:2}]
+#
+#print(c[0]["F"])
+
+A="ASADSADs"
+print(A[-1:])
+#print(A[0:2])
+#
+#dix={"s":1}
+#print("s" in dix)
+
+for i in range(2,5):
+    print(i)
+    
+A=False
+print(A)
