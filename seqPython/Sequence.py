@@ -5,10 +5,13 @@ Created on Wed Nov  7 13:29:52 2018
 
 """
 import numpy as np
+import markov as mk
 class Sequence:
     chDic=["A","T","C","G"]
     ## 求 序列kmer集合：返回集合和字典  序列长度n tc=O(n)
     def getSingleSeqKerSet(self,sequence,k):
+        if k>len(sequence):
+            print("k的长度大于序列长度，不合法，请重新设置")
         if k<=0:
             print("k的设定小于等于0，不合法")
             return 
@@ -57,7 +60,7 @@ class Sequence:
                 resultdic[key]=resultdic[key]+lis[i][key]
         return resultdic
                 
-    ## 为序列去掉末尾元素
+    ## 为序列去掉末尾元素 tc=O(n)
     def trimSequence(self,sequences):
         result=list.copy(sequences)
         for i in range(len(sequences)):
@@ -85,16 +88,43 @@ class Sequence:
                 freq[i][co]=lis[i][dc]
                 co=co+1
         return lis,freq+np.spacing(1)
+    
+    ## 统计D2S kmersetdic 表示所有序列所有的kmer集合
+    def getD2SCount(self,sequence,sequences,k,r,flag,kmersetdic):
+        ses=[]
+        ses.append(sequence)
+        # 获得词统计
+        lis,count=self.getSeqCount(ses,k,kmersetdic)
+        ma=mk.Markov()
+        prodic={}
+        if flag==False:
+            prodic=ma.get_Single_kmer_Pro(sequence,k,r,kmersetdic)
+        else:
+            prodic=ma.get_Mul_kmer_Pro(sequence,sequences,k,r)
+        n=len(sequence)
+        for key in prodic:
+            prodic[key]=lis[0][key]-n*prodic[key]
+        return self.addfloat(prodic)
+    
+    # 平滑数据
+    def addfloat(self,dic):
+        tmp=dict.copy(dic)
+        for key in dict.keys(tmp):
+            tmp[key]=tmp[key]+np.spacing(1)
+        return tmp
+         
 
-            
 if __name__ =="__main__":
     sequece="ATCTCTAAAGGGA"
-    sequences=["ATCG","CGATC","ACTGTT"]
-   
+    sequences=["ATCCATA","CGACCCC","ACTAA"]
+    k=4
+    r=1
     SequenceTest=Sequence()
     print(SequenceTest.trimSequence(sequences))
     # 字典集合
-    kmerset,dic=SequenceTest.getSeqKerSet(sequences,3)
-    lis,freq=SequenceTest.getSeqfreq(sequences,3,dic)
-    print(lis)
-    #初始化
+    kmerset,dic=SequenceTest.getSeqKerSet(sequences,k)
+#    lis,freq=SequenceTest.getSeqfreq(sequences,k,dic)
+#    print(lis)
+    print("--------------")
+    prodic=SequenceTest.getD2SCount(sequences[0],sequences,k,r,False,dic)
+    print(prodic)

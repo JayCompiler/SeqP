@@ -121,7 +121,7 @@ class Distance:
             ma=max(ma,abs(freq[0,i]-freq[1,i]))
         return ma
     
-    def D2(self,seqA,seqB,k):
+    def getD2(self,seqA,seqB,k):
         seqLis=[]
         # 变成list
         seqLis.append(seqA)
@@ -134,14 +134,43 @@ class Distance:
         su=0.0
         for i in range(count.shape[1]):
             su=su+count[0,i]*count[1,i]
-        return su
+        return 1/su
     
+    # 输入参数为 序列A，B，kmer长度k，马尔可夫阶数r,是否用全局马尔可夫flag 标志，True表示全局，False表示单条
+    # kmerset 表示多少条链参与比较
+    def getD2S(self,seqA,seqB,k,r,flag,kmersetdic):
+        seqLis=[]
+        # 变成list
+        seqLis.append(seqA)
+        seqLis.append(seqB)
+        Sq =Sequence.Sequence()
+        # 获取 关键字集合 字典dic
+        kmerSet,dic =Sq.getSeqKerSet(seqLis,k)
+        if flag==False:
+            lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,dic)
+            lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,dic)
+        else:
+            lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,kmersetdic)
+            lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,kmersetdic)
+        #计算D2S
+        su=0.0
+        for key in dict.keys(lisFeaA):
+            su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lisFeaA[key]**2+lisFeaB[key]**2)
+        return 1/su
     
     
     
 if __name__=="__main__":
-    seqA="ATCG"
-    seqB="TCAG"
+    seqA="ATCCATCGCAATATCTCTATGGGAAC"
+    seqB="ATCCATCGCAATATCTCTATGGGAAC"
+#    seqB="ATCCATCGATCTGCCTACATCAGGG"
+    slis=[]
+    slis.append(seqA)
+    slis.append(seqB)
+    k=4
+    r=1
+    Seq=Sequence.Sequence()
+    kmerset,kmersetdic=Seq.getSeqKerSet(slis,k)
     distance =Distance()
     su=distance.EuD(seqA,seqB,2)
     print(su)
@@ -156,5 +185,8 @@ if __name__=="__main__":
     print(su)
     su=distance.chebyshev(seqA,seqB,2)
     print(su)
-    su=distance.D2(seqA,seqB,2)
+    su=distance.getD2(seqA,seqB,2)
+    print(su)
+    print("-----------")
+    su=distance.getD2S(seqA,seqB,2,r,False,kmersetdic)
     print(su)

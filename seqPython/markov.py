@@ -82,13 +82,15 @@ class Markov:
     
     ##0，1，2阶马尔柯夫模型的k-mer概率 ，以单条序列初始状态与状态转移矩阵估计概率 
     ## 序列长度n，kmer 长度k，tc=O(nk)
-    def get_Single_kmer_Pro(self,sequence,k,r):
+    def get_Single_kmer_Pro(self,sequence,k,r,kmersetdic):
         if r>=k:
             r=0
         Sq=Sequence.Sequence()
         # 单条序列的kmerset,dic
         kmerSet,dic=Sq.getSingleSeqKerSet(sequence,k)
-        resultdic=dict.copy(dic)
+        resultdic=dict.copy(kmersetdic)
+#        resultdic=dict.copy(dic)
+
         # 初始概率：
         initProdic=self.init_Single_pro(sequence)
         if r==0:
@@ -120,7 +122,8 @@ class Markov:
         Sq=Sequence.Sequence()
         # 单条序列的kmerset,dic
         kmerSet,dic=Sq.getSingleSeqKerSet(sequence,k)
-        resultdic=dict.copy(dic)
+        kmers,dic1=Sq.getSeqKerSet(sequences,k)
+        resultdic=dict.copy(dic1)
 #        print("sad",resultdic)
         # 初始概率：
         initProdic=self.init_MUl_pro(sequences)
@@ -156,7 +159,9 @@ if __name__ =="__main__":
      print(dic)
      dic1 =MA.trans_SingleSeq_Matrix(sequence[0],2)
      print(dic1)
-     pp=MA.get_Single_kmer_Pro(sequence[0],3,2)
+     Sq=Sequence.Sequence()
+     kmer,dic=Sq.getSeqKerSet(sequence,3)
+     pp=MA.get_Single_kmer_Pro(sequence[0],3,2,dic)
      print(pp)
      print("----------------")
      
