@@ -9,6 +9,7 @@ import Sequence
 import math
 import numpy as np
 import sys
+import markov 
 class Distance:
     ## 欧式距离
     def EuD(self,seqA,seqB,k):
@@ -156,18 +157,50 @@ class Distance:
         su=0.0
         for key in dict.keys(lisFeaA):
             su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lisFeaA[key]**2+lisFeaB[key]**2)
-        return 1/su
+        return abs(1/su)
+    
+    # 输入参数为 序列A，B，kmer长度k，马尔可夫阶数r,是否用全局马尔可夫flag 标志，True表示全局，False表示单条
+    # kmerset 表示多少条链参与比较
+    def getD2Star(self,seqA,seqB,k,r,flag,sequences,kmersetdic):
+        seqLis=[]
+        # 变成list
+        seqLis.append(seqA)
+        seqLis.append(seqB)
+        Sq =Sequence.Sequence()
+        # 获取 关键字集合 字典dic
+        kmerSet,dic =Sq.getSeqKerSet(seqLis,k)
+        # 获取kmer概率
+        Ma=markov.Markov()
+        kmerPA={}
+        kmerPB={}
+        if flag==False:
+            lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,dic)
+            lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,dic)
+            kmerPA=Ma.get_Single_kmer_Pro(seqA,k,r,dic)
+            kmerPB=Ma.get_Single_kmer_Pro(seqB,k,r,dic)
+        else:
+            lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,kmersetdic)
+            lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,kmersetdic)
+            kmerPA=Ma.get_Mul_kmer_Pro(seqA,sequences,k,r)
+            kmerPB=Ma.get_Mul_kmer_Pro(seqB,sequences,k,r)
+        #计算D2Star
+        su=0.0
+        lenA=len(seqA)
+        lenB=len(seqB)
+        for key in dict.keys(lisFeaA):
+            su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lenA*kmerPA[key]*lenB*kmerPB[key])
+        return abs(1/su)
     
     
     
 if __name__=="__main__":
-    seqA="ATCCATCGCAATATCTCTATGGGAAC"
-    seqB="ATCCATCGCAATATCTCTATGGGAAC"
-#    seqB="ATCCATCGATCTGCCTACATCAGGG"
+    seqA="ATCCATCGCAATATCTCTATGGGAACACTCATCATCTACTATCTAGAGGAG"
+#    seqB="ATCCATCGCAATATCTCTATGGGAACACTCATCATCTACTATCTAGAGGAG"
+    seqB="ATCCATCGATCTGCCTACATCAGGGCTACAGCTCTGCATTGCAGCAGTCATCAGCAT"
     slis=[]
     slis.append(seqA)
     slis.append(seqB)
-    k=4
+    k=15
     r=1
     Seq=Sequence.Sequence()
     kmerset,kmersetdic=Seq.getSeqKerSet(slis,k)
@@ -188,5 +221,7 @@ if __name__=="__main__":
     su=distance.getD2(seqA,seqB,2)
     print(su)
     print("-----------")
-    su=distance.getD2S(seqA,seqB,2,r,False,kmersetdic)
+    su=distance.getD2S(seqA,seqB,k,r,False,kmersetdic)
+    print(su)
+    su=distance.getD2Star(seqA,seqB,k,r,False,slis,kmersetdic)
     print(su)

@@ -113,7 +113,7 @@ class Markov:
                 for loc in range(len(kmer)-r):
                     pro=pro*transdic[kmer[loc:loc+r+1]]
                 resultdic[kmer]=pro    
-        return resultdic
+        return Sq.addfloat(resultdic)
     ##0，1，2阶马尔柯夫模型的k-mer概率 ，以多条序列初始状态与状态转移矩阵估计概率 
     ## 序列长度n，kmer 长度k，tc=O(nk)
     def get_Mul_kmer_Pro(self,sequence,sequences,k,r):
@@ -146,8 +146,8 @@ class Markov:
             # kmer概率
                 for loc in range(len(kmer)-r):
                     pro=pro*transdic[kmer[loc:loc+r+1]]
-                resultdic[kmer]=pro    
-        return resultdic
+                resultdic[kmer]=pro 
+        return Sq.addfloat(resultdic)
        
         
 
