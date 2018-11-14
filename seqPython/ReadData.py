@@ -14,7 +14,7 @@ class ReadData:
         L=[]   
         fils=[]
         for dirpath, dirnames, filenames in os.walk(file_dir):  
-            for file in filenames :  
+            for file in filenames:  
                 if os.path.splitext(file)[1] == '.fasta':  
                     L.append(os.path.join(dirpath, file)) 
                     fils.append(file)
@@ -24,16 +24,60 @@ class ReadData:
     def getData(self,file_dir):
         L,fils=self.file_name(file_dir)
         data=[]
+        label=[]
+        query=[]
         for file in L:
-            with open(file) as a:
-                lis=a.readlines()
-                # 去掉换行符
-                data.append(lis[1].strip('\n'))
-        return data
+#            print(file.split('.')[0][-1])
+            if file.split('.')[0][-1]!='-' and file.split('.')[0][-1]!='+':
+                with open(file) as a:
+                    lis=a.readlines()
+                    # 去掉换行符
+                    query.append(lis[1].strip('\n'))
+            else:
+                 with open(file) as a:
+                    lis=a.readlines()
+                    # 去掉换行符
+                    data.append(lis[1].strip('\n'))
+                    if file.split('.')[0][-1]=='-':
+                        label.append(0)
+                    else:
+                        label.append(1)
+        return self.normdata(query),self.normdata(data),label
+    ## 去掉序列中的的单词
+    def normdata(self,lis):
+        newlis=[]
+        start=0
+        end=0
+        for sequence in lis:
+            tmp=[]
+            for i in range(len(sequence)):
+                if sequence[i]!="A" and sequence[i]!="T" and sequence[i]!="C"and \
+                sequence[i]!="G":
+                    end=i
+                    tp=sequence[start:end]
+                    tmp.append(tp)
+                    start=end+1
+                ## 处理末尾的情况
+                if (sequence[i]=="A" or sequence[i]=="T" or sequence[i]=="C"or \
+                sequence[i]=="G") and i==len(sequence)-1:
+                    tmp.append(sequence[start:])
+            newSeq=""
+            for seq in tmp:
+                newSeq=newSeq+seq
+            newlis.append(newSeq)
+            start=0
+            end=0
+        return newlis
+        
+                    
 
 if __name__=="__main__":
     rd=ReadData()
-    data=rd.getData("dataset1")
-    for da in data:
-        print(da)
-    
+    print(rd.normdata(["ATACTASSGDGASDA","TACGASDJAS"]))
+#    query,data,label=rd.getData("dataset1")
+#    print(query)
+#    print(data)
+#    print(label)
+#    for da in data:
+#        print(da)
+#    

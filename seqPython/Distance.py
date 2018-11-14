@@ -176,8 +176,8 @@ class Distance:
         if flag==False:
             lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,dic)
             lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,dic)
-            kmerPA=Ma.get_Single_kmer_Pro(seqA,k,r,dic)
-            kmerPB=Ma.get_Single_kmer_Pro(seqB,k,r,dic)
+            kmerPA=Ma.get_Single_kmer_Pro(seqA,seqLis,k,r)
+            kmerPB=Ma.get_Single_kmer_Pro(seqB,seqLis,k,r)
         else:
             lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,kmersetdic)
             lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,kmersetdic)

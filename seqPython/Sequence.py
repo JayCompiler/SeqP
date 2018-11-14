@@ -98,12 +98,15 @@ class Sequence:
         ma=mk.Markov()
         prodic={}
         if flag==False:
-            prodic=ma.get_Single_kmer_Pro(sequence,k,r,kmersetdic)
+            prodic=ma.get_Single_kmer_Pro(sequence,sequences,k,r)
         else:
             prodic=ma.get_Mul_kmer_Pro(sequence,sequences,k,r)
         n=len(sequence)
         for key in prodic:
-            prodic[key]=lis[0][key]-n*prodic[key]
+            if lis[0][key]==0:
+                lis[0][key]=0
+            else:
+                prodic[key]=lis[0][key]-n*prodic[key]
         return self.addfloat(prodic)
     
     # 平滑数据

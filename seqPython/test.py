@@ -13,6 +13,7 @@ Created on Wed Nov  7 14:42:05 2018
 #print(c[0]["F"])
 import numpy as np
 import os
+from sklearn import metrics
 
 def file_name(file_dir):   
     L=[]   
@@ -28,27 +29,16 @@ def file_name(file_dir):
 
 if __name__=="__main__":
     L,fils=file_name("dataset1")
-#    print(L)
-#    print(len(L))
-#    print(fils)
     data=[]
-    for file in L:
-        with open(file) as a:
-            lis=a.readlines()
-            data.append(lis[1])
-    for da in data:
-        print(da)
-    # os.walk 返回当前路径，文件夹，文件
-#    rootpath,dirs,files=os.walk(".",topdown=False)
-#    #for root, dirs, files in os.walk(".", topdown=False):
-#    #    print(root)
-#    #    for name in files:
-#    #        print(os.path.join(root, name))
-#    #    for name in dirs:
-#    #        print(os.path.join(root, name))  
-#    #ss=os.path.join(root,dirs)
-#    print(rootpath)
-#    print("-------------------------")
-#    print(dirs)
-#    print("-------------------------")
-#    print(files)
+    label=[1,0,1,1,0,0]
+    pred=[0.3,0.2,0.25,0.1,0.11,0.1]
+    fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
+    auc=metrics.auc(fpr, tpr)
+    print(auc)
+
+    a=["ATACTASSGDGASDA","das","sda"]
+    lis=[[1,2],[3,4],[5,8]]
+    kk=np.array(lis)
+    print(kk[1][1])
+#    print(a[1:2])
+#    print(b)
