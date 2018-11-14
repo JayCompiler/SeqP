@@ -200,7 +200,7 @@ if __name__=="__main__":
     slis=[]
     slis.append(seqA)
     slis.append(seqB)
-    k=15
+    k=5
     r=1
     Seq=Sequence.Sequence()
     kmerset,kmersetdic=Seq.getSeqKerSet(slis,k)
