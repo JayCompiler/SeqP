@@ -34,11 +34,23 @@ class Similarity:
         dis=Distance.Distance()
         sim=dis.getD2(seqA,seqB,k)
         return 1/sim
+    def getD2WeightSim(self,seqA,seqB,k,sequences,weight):
+        dis=Distance.Distance()
+        sim=dis.getD2Weight(seqA,seqB,k,sequences,weight)
+        return 1/sim
     def getD2sSim(self,seqA,seqB,k,r,flag,kmersetdic):
         dis=Distance.Distance()
         sim=dis.getD2S(seqA,seqB,k,r,flag,kmersetdic)
         return 1/sim
+    def getD2sWeightSim(self,seqA,seqB,k,r,flag,kmersetdic,weight):
+        dis=Distance.Distance()
+        sim=dis.getD2SWeight(seqA,seqB,k,r,flag,kmersetdic,weight)
+        return 1/sim
     def getD2starSim(self,seqA,seqB,k,r,flag,sequences,kmersetdic):
         dis=Distance.Distance()
         sim=dis.getD2Star(seqA,seqB,k,r,flag,sequences,kmersetdic)
+        return 1/sim
+    def getD2starWeightSim(self,seqA,seqB,k,r,flag,sequences,kmersetdic,weight):
+        dis=Distance.Distance()
+        sim=dis.getD2StarWeight(seqA,seqB,k,r,flag,sequences,kmersetdic,weight)
         return 1/sim

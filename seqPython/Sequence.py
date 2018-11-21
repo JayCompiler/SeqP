@@ -33,6 +33,14 @@ class Sequence:
         dic=dict.fromkeys(kmerSet,0)
         return kmerSet,dic
     
+    ## 求数据集合序列kmer集合：集合转换成字典返回  序列长度n，序列个数m tc=O((kend-ksatrt)*mn)
+    def getMulSeqKerSet(self,sequences,kstart,kend):
+        kmerset,dic=self.getSeqKerSet(sequences,kstart)
+        for k in range(kstart+1,kend+1):
+            tmpset,tmpdic=self.getSeqKerSet(sequences,k)
+            dic=dict(dic,**tmpdic)
+        return dic
+    
     ## 统计词计数   输入序列list，k和字典  序列长度n，序列个数m  tc=O(mn)
     def getSeqCount(self,sequences,k,dic):
         lis=[]
@@ -50,6 +58,18 @@ class Sequence:
                 count[i][co]=lis[i][dc]
                 co=co+1
         return lis,count+np.spacing(1)
+    
+    
+     # 获取多个k 的频数 时间复杂度 为O((kend-kstart)*mn)
+    def getMulCount(self,sequences,kstart,kend):
+         kmerset,dic=self.getSeqKerSet(sequences,kstart)
+         countLis,count=self.getSeqCount(sequences,kstart,dic)
+         for k in range(kstart+1,kend+1):
+            kmerset,dic=self.getSeqKerSet(sequences,k)
+            tmpcountLis,count=self.getSeqCount(sequences,k,dic)
+            for i in range(len(countLis)):
+                countLis[i]=dict(countLis[i],**(tmpcountLis[i]))
+         return countLis
     
     ## 统计kmer 在所有数据出现的次数,返回字典 tc=O(mn)
     def getkmerCount(self,sequences,dic,k):
@@ -89,7 +109,7 @@ class Sequence:
                 co=co+1
         return lis,freq+np.spacing(1)
     
-    ## 统计D2S kmersetdic 表示所有序列所有的kmer集合
+    ## 统计D2S kmersetdic 表示所有序列所有的kmer集合 O(m*n*k)
     def getD2SCount(self,sequence,sequences,k,r,flag,kmersetdic):
         ses=[]
         ses.append(sequence)
@@ -104,11 +124,66 @@ class Sequence:
         n=len(sequence)
         for key in prodic:
             if lis[0][key]==0:
-                lis[0][key]=0
+                prodic[key]=0
             else:
                 prodic[key]=lis[0][key]-n*prodic[key]
         return self.addfloat(prodic)
     
+    
+    ## 统计多个k值 D2S kmersetdic 表示所有序列所有的kmer集合 O((kend-kstart)*m*n*k)
+    def getD2SMulCount(self,sequence,sequences,kstart,kend,r,flag):
+        kmerset,kmersetdic=self.getSeqKerSet(sequences,kstart)
+        prodic =self.getD2SCount(sequence,sequences,kstart,r,flag,kmersetdic)
+        for k in range(kstart+1,kend+1):
+            kmerset,kmersetdic=self.getSeqKerSet(sequences,k)
+            tmpprodic =self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic)
+            prodic=dict(prodic,**tmpprodic)
+        return prodic
+    
+    # 获取多个k 的频率
+    def getMulFreq(self,sequences,kstart,kend):
+         kmerset,dic=self.getSeqKerSet(sequences,kstart)
+         freqLis,freq=self.getSeqfreq(sequences,kstart,dic)
+         for k in range(kstart+1,kend+1):
+            kmerset,dic=self.getSeqKerSet(sequences,k)
+            tmpfreqLis,freq=self.getSeqfreq(sequences,k,dic)
+            for i in range(len(freqLis)):
+                freqLis[i]=dict(freqLis[i],**(tmpfreqLis[i]))
+         return freqLis
+    
+    ## 获取权重  freqLis表示频率矩阵 时间复杂度O(n*m^2)
+    def getWeight(self,freqLis):
+        # 获得字典
+        resultdic = dict.copy(freqLis[0]) 
+        for key in resultdic:
+            tmp=0.0
+            for j in range(len(freqLis)):
+                for k in range(len(freqLis)):
+                    tmp=abs(freqLis[j][key]-freqLis[k][key])+tmp
+            resultdic[key]=tmp
+        # 计算权重    
+        suf=0.0
+        for key in resultdic:
+            suf=resultdic[key]+suf
+        for key in resultdic:
+            resultdic[key]=resultdic[key]/suf
+        return resultdic
+    
+    
+    
+    ## 获取多个k的权重  freqLis表示频率矩阵 时间复杂度O((kend-kstart)*n*m^2)
+    def getMulWeight(self,sequences,kstart,kend):
+        #获取第一个频率合集合字典 
+        kmerset,dic=self.getSeqKerSet(sequences,kstart)
+        freqLis,freq=self.getSeqfreq(sequences,kstart,dic)
+        for k in range(kstart+1,kend+1):
+            kmerset,dic=self.getSeqKerSet(sequences,k)
+            tmpfreqLis,freq=self.getSeqfreq(sequences,k,dic)
+            for i in range(len(freqLis)):
+                freqLis[i]=dict(freqLis[i],**(tmpfreqLis[i]))
+        resultdic=self.getWeight(freqLis)
+        return resultdic
+        
     # 平滑数据
     def addfloat(self,dic):
         tmp=dict.copy(dic)
@@ -122,12 +197,16 @@ if __name__ =="__main__":
     sequences=["ATCCATA","CGACCCC","ACTAA"]
     k=4
     r=1
+    ks=2
+    ke=4
     SequenceTest=Sequence()
-    print(SequenceTest.trimSequence(sequences))
+    wei=SequenceTest.getMulWeight(sequences,ks,ke)
+    print(wei)
+#    print(SequenceTest.trimSequence(sequences))
     # 字典集合
-    kmerset,dic=SequenceTest.getSeqKerSet(sequences,k)
+#    kmerset,dic=SequenceTest.getSeqKerSet(sequences,k)
 #    lis,freq=SequenceTest.getSeqfreq(sequences,k,dic)
 #    print(lis)
-    print("--------------")
-    prodic=SequenceTest.getD2SCount(sequences[0],sequences,k,r,False,dic)
-    print(prodic)
+#    print("--------------")
+#    prodic=SequenceTest.getD2SCount(sequences[0],sequences,k,r,False,dic)
+#    print(prodic)

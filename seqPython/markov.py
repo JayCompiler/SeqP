@@ -120,6 +120,12 @@ class Markov:
                 resultdic[kmer]=pro    
         return Sq.addfloat(resultdic)
     
+    def get_MulK_Single_kmer_pro(self,sequence,sequences,kstart,kend,r):
+        resultdic = self.get_Single_kmer_Pro(sequence,sequences,kstart,r)
+        for k in range(kstart+1,kend+1):
+            tmpresultdic=self.get_Single_kmer_Pro(sequence,sequences,k,r)
+            resultdic=dict(resultdic,tmpresultdic)
+        return resultdic
     
     
     
@@ -157,7 +163,14 @@ class Markov:
                     pro=pro*transdic[kmer[loc:loc+r+1]]
                 resultdic[kmer]=pro 
         return Sq.addfloat(resultdic)
-       
+    
+    
+    def get_Mulk_Mul_kmer_Pro(self,sequence,sequences,kstart,kend,r):
+        resultdic = self.get_Mul_kmer_Pro(sequence,sequences,kstart,r)
+        for k in range(kstart+1,kend+1):
+            tmpresultdic=self.get_Mul_kmer_Pro(sequence,sequences,k,r)
+            resultdic=dict(resultdic,tmpresultdic)
+        return resultdic
         
 
 

@@ -17,10 +17,11 @@ if __name__=="__main__":
 #    print("---------------------------------")
 #    print(datasets)
     datasets.append(query[0])
-   
-    for k in range(2,9):
+    
+
+    for k in range(2,11):
         ## 欧式距离
-       
+        kemrset,kmersetdic=sq.getSeqKerSet(datasets,k)
         print("--------------欧式相似度方法------------")
         pred=[]
         for data in dataset:
@@ -106,22 +107,27 @@ if __name__=="__main__":
                 slis=[]
                 slis.append(query[0])
                 slis.append(data)
-                kemrset,kmersetdic=sq.getSeqKerSet(slis,k)
-                si=sim.getD2sSim(query[0],data,k,r,False,kmersetdic)
+#                kemrset,kmersetdic=sq.getSeqKerSet(slis,k)
+#                kemrset,kmersetdic=sq.getSeqKerSet(datasets,k)
+#                si=sim.getD2sSim(query[0],data,k,r,False,kmersetdic)
+                si=sim.getD2sSim(query[0],data,k,r,True,kmersetdic)
+
                 pred.append(si)
             fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
             auc=metrics.auc(fpr, tpr)    
             print("k=",k,"r=",r," eur.auc=:")
             print(auc)
-            
             print("--------------D2star相似度方法------------")
             pred=[]
             for data in dataset:
                 slis=[]
                 slis.append(query[0])
                 slis.append(data)
-                kemrset,kmersetdic=sq.getSeqKerSet(slis,k)
-                si=sim.getD2starSim(query[0],data,k,r,False,datasets,kmersetdic)
+#                kemrset,kmersetdic=sq.getSeqKerSet(slis,k)
+#                kemrset,kmersetdic=sq.getSeqKerSet(datasets,k)
+#                si=sim.getD2starSim(query[0],data,k,r,False,datasets,kmersetdic)
+                si=sim.getD2starSim(query[0],data,k,r,True,datasets,kmersetdic)
+
                 pred.append(si)
             fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
             auc=metrics.auc(fpr, tpr)    
