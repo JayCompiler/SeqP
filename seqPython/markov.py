@@ -169,7 +169,7 @@ class Markov:
         resultdic = self.get_Mul_kmer_Pro(sequence,sequences,kstart,r)
         for k in range(kstart+1,kend+1):
             tmpresultdic=self.get_Mul_kmer_Pro(sequence,sequences,k,r)
-            resultdic=dict(resultdic,tmpresultdic)
+            resultdic=dict(resultdic,**tmpresultdic)
         return resultdic
         
 

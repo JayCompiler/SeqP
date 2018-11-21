@@ -6,6 +6,8 @@ Created on Wed Nov  7 13:29:52 2018
 """
 import numpy as np
 import markov as mk
+import Statistic
+import math
 class Sequence:
     chDic=["A","T","C","G"]
     ## 求 序列kmer集合：返回集合和字典  序列长度n tc=O(n)
@@ -58,15 +60,27 @@ class Sequence:
                 count[i][co]=lis[i][dc]
                 co=co+1
         return lis,count+np.spacing(1)
+    ## z-score 标准化数据
+    def normdata(self,dic):
+        mea=Statistic.mean(dic)
+        sd1=Statistic.sd(dic)
+        for key in dict.keys(dic):
+            dic[key]=(dic[key]-mea)/sd1
+        return dic
     
-    
-     # 获取多个k 的频数 时间复杂度 为O((kend-kstart)*mn)
-    def getMulCount(self,sequences,kstart,kend):
+     # 获取多个k 的频数 时间复杂度 为O((kend-kstart)*mn) 
+    def getMulCount(self,seqLis,kstart,kend,sequences):
          kmerset,dic=self.getSeqKerSet(sequences,kstart)
-         countLis,count=self.getSeqCount(sequences,kstart,dic)
+         countLis,count=self.getSeqCount(seqLis,kstart,dic)
+         ## 时间复杂度为O(mn)
+         for i in range(len(countLis)):
+             countLis[i]=self.normdata(countLis[i])
+             
          for k in range(kstart+1,kend+1):
             kmerset,dic=self.getSeqKerSet(sequences,k)
-            tmpcountLis,count=self.getSeqCount(sequences,k,dic)
+            tmpcountLis,count=self.getSeqCount(seqLis,k,dic)
+            for i in range(len(tmpcountLis)):
+             tmpcountLis[i]=self.normdata(tmpcountLis[i])
             for i in range(len(countLis)):
                 countLis[i]=dict(countLis[i],**(tmpcountLis[i]))
          return countLis
@@ -128,15 +142,52 @@ class Sequence:
             else:
                 prodic[key]=lis[0][key]-n*prodic[key]
         return self.addfloat(prodic)
+    ## 统计D2Star kmersetdic 表示所有序列所有的kmer集合 O(m*n*k)
+    def getD2StarCount(self,sequence,sequences,k,r,flag,kmersetdic):
+        n=len(sequence)
+        ses=[]
+        ses.append(sequence)
+        # 获得词统计
+        lis,count=self.getSeqCount(ses,k,kmersetdic)
+        ma=mk.Markov()
+        prodic={}
+        if flag==False:
+            prodic=ma.get_Single_kmer_Pro(sequence,sequences,k,r)
+        else:
+            prodic=ma.get_Mul_kmer_Pro(sequence,sequences,k,r)
+        n=len(sequence)
+        for key in prodic:
+            if lis[0][key]==0:
+                prodic[key]=0
+            else:
+                prodic[key]=(lis[0][key]-n*prodic[key])/math.sqrt(n*prodic[key])
+        return self.addfloat(prodic)
+    
+    
+    
     
     
     ## 统计多个k值 D2S kmersetdic 表示所有序列所有的kmer集合 O((kend-kstart)*m*n*k)
     def getD2SMulCount(self,sequence,sequences,kstart,kend,r,flag):
         kmerset,kmersetdic=self.getSeqKerSet(sequences,kstart)
         prodic =self.getD2SCount(sequence,sequences,kstart,r,flag,kmersetdic)
+        prodic =self.normdata(prodic)
         for k in range(kstart+1,kend+1):
             kmerset,kmersetdic=self.getSeqKerSet(sequences,k)
             tmpprodic =self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic)
+            tmpprodic =self.normdata(tmpprodic)
+            prodic=dict(prodic,**tmpprodic)
+        return prodic
+    
+     ## 统计多个k值 D2Star kmersetdic 表示所有序列所有的kmer集合 O((kend-kstart)*m*n*k)
+    def getD2StarMulCount(self,sequence,sequences,kstart,kend,r,flag):
+        kmerset,kmersetdic=self.getSeqKerSet(sequences,kstart)
+        prodic =self.getD2StarCount(sequence,sequences,kstart,r,flag,kmersetdic)
+        prodic =self.normdata(prodic)
+        for k in range(kstart+1,kend+1):
+            kmerset,kmersetdic=self.getSeqKerSet(sequences,k)
+            tmpprodic =self.getD2StarCount(sequence,sequences,k,r,flag,kmersetdic)
+            tmpprodic =self.normdata(tmpprodic)
             prodic=dict(prodic,**tmpprodic)
         return prodic
     
@@ -144,9 +195,13 @@ class Sequence:
     def getMulFreq(self,sequences,kstart,kend):
          kmerset,dic=self.getSeqKerSet(sequences,kstart)
          freqLis,freq=self.getSeqfreq(sequences,kstart,dic)
+         for i in range(len(freqLis)):
+             freqLis[i]=self.normdata(freqLis[i])
          for k in range(kstart+1,kend+1):
             kmerset,dic=self.getSeqKerSet(sequences,k)
             tmpfreqLis,freq=self.getSeqfreq(sequences,k,dic)
+            for i in range(len(tmpfreqLis)):
+                tmpfreqLis[i]=self.normdata(tmpfreqLis[i])
             for i in range(len(freqLis)):
                 freqLis[i]=dict(freqLis[i],**(tmpfreqLis[i]))
          return freqLis
@@ -174,14 +229,16 @@ class Sequence:
     ## 获取多个k的权重  freqLis表示频率矩阵 时间复杂度O((kend-kstart)*n*m^2)
     def getMulWeight(self,sequences,kstart,kend):
         #获取第一个频率合集合字典 
-        kmerset,dic=self.getSeqKerSet(sequences,kstart)
-        freqLis,freq=self.getSeqfreq(sequences,kstart,dic)
-        for k in range(kstart+1,kend+1):
-            kmerset,dic=self.getSeqKerSet(sequences,k)
-            tmpfreqLis,freq=self.getSeqfreq(sequences,k,dic)
-            for i in range(len(freqLis)):
-                freqLis[i]=dict(freqLis[i],**(tmpfreqLis[i]))
+        freqLis=self.getMulFreq(sequences,kstart,kend)
         resultdic=self.getWeight(freqLis)
+#        kmerset,dic=self.getSeqKerSet(sequences,kstart)
+#        freqLis,freq=self.getSeqfreq(sequences,kstart,dic)
+#        for k in range(kstart+1,kend+1):
+#            kmerset,dic=self.getSeqKerSet(sequences,k)
+#            tmpfreqLis,freq=self.getSeqfreq(sequences,k,dic)
+#            for i in range(len(freqLis)):
+#                freqLis[i]=dict(freqLis[i],**(tmpfreqLis[i]))
+#        resultdic=self.getWeight(freqLis)
         return resultdic
         
     # 平滑数据

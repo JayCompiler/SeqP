@@ -260,14 +260,15 @@ class Distance:
     
     
      ## 多个k值权重的D2
-    def getD2MUlWeight(self,seqA,seqB,kstart,kend,sequences,weight):
+    def getMulD2Weight(self,seqA,seqB,kstart,kend,sequences,weight):
         seqLis=[]
         # 变成list
         seqLis.append(seqA)
         seqLis.append(seqB)
         Sq =Sequence.Sequence()
         # 获取 关键字集合 字典dic
-        lisFea,count=Sq.getMulCount(seqLis,kstart,kend)
+        lisFea=Sq.getMulCount(seqLis,kstart,kend,sequences)
+#        print(lisFea)
         #计算D2
         su=0.0
         for key in lisFea[0]:
@@ -276,15 +277,15 @@ class Distance:
     
     
     ## 多个k值的带权重的D2s
-    def getD2SMulWeight(self,seqA,seqB,kstart,kend,r,flag,weight):
+    def getMulD2SWeight(self,seqA,seqB,kstart,kend,r,flag,sequences,weight):
         seqLis=[]
         # 变成list
         seqLis.append(seqA)
         seqLis.append(seqB)
         Sq =Sequence.Sequence()
         # 获取 关键字集合 字典dic
-        lisFeaA=Sq.getD2SMulCount(seqA,seqLis,kstart,kend,r,flag)
-        lisFeaB=Sq.getD2SMulCount(seqB,seqLis,kstart,kend,r,flag)
+        lisFeaA=Sq.getD2SMulCount(seqA,sequences,kstart,kend,r,flag)
+        lisFeaB=Sq.getD2SMulCount(seqB,sequences,kstart,kend,r,flag)
         
         #计算D2S
         su=0.0
@@ -296,33 +297,14 @@ class Distance:
         seqLis=[]
         # 变成list
         seqLis.append(seqA)
-        seqLis.append(seqB)
-        Sq =Sequence.Sequence()
-        
-        
-        
+        seqLis.append(seqB)        
         # 获取 关键字集合 字典dic
-        kmerSet,dic =Sq.getSeqKerSet(seqLis,k)
-        # 获取kmer概率
-        Ma=markov.Markov()
-        kmerPA={}
-        kmerPB={}
-        if flag==False:
-            lisFeaA=Sq.getD2SMulCount(seqA,sequences,kstart,kend,r,flag)
-            lisFeaB=Sq.getD2SMulCount(seqB,sequences,kstart,kend,r,flag)
-            kmerPA=Ma.get_MulK_Single_kmer_pro(seqA,sequences,kstart,kend,r)
-            kmerPB=Ma.get_MulK_Single_kmer_pro(seqB,sequences,kstart,kend,r)
-        else:
-            lisFeaA=Sq.getD2SMulCount(seqA,sequences,kstart,kend,r,flag)
-            lisFeaB=Sq.getD2SMulCount(seqB,sequences,kstart,kend,r,flag)
-            kmerPA=Ma.get_Mulk_Mul_kmer_Pro(seqA,sequences,kstart,kend,r)
-            kmerPB=Ma.get_Mulk_Mul_kmer_Pro(seqB,sequences,kstart,kend,r)
-        #计算D2Star
+        Sq=Sequence.Sequence()
+        lisFeaA=Sq.getD2StarMulCount(seqA,sequences,kstart,kend,r,flag)
+        lisFeaB=Sq.getD2StarMulCount(seqB,sequences,kstart,kend,r,flag)
         su=0.0
-        lenA=len(seqA)
-        lenB=len(seqB)
         for key in dict.keys(lisFeaA):
-            su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lenA*kmerPA[key]*lenB*kmerPB[key])*weight[key]
+            su=su+(lisFeaA[key]*lisFeaB[key])*weight[key]
         return 1/(su+np.spacing(1))
     
     

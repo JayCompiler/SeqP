@@ -131,7 +131,7 @@ if __name__=="__main__":
                 pred.append(si)
             fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
             auc=metrics.auc(fpr, tpr)    
-            print("k=",k,"r=",r," eur.auc=:")
+            print("k=",k,"r=",r," auc=:")
             print(auc)
         
         
