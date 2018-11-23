@@ -131,7 +131,7 @@ class Markov:
     
     ##0，1，2阶马尔柯夫模型的k-mer概率 ，以多条序列初始状态与状态转移矩阵估计概率 
     ## 序列长度n，kmer 长度k，tc=O(nk)
-    def get_Mul_kmer_Pro(self,sequence,sequences,k,r):
+    def get_Mul_kmer_Pro(self,sequences,k,r):
         if r>=k:
             r=0
         Sq=Sequence.Sequence()
@@ -165,10 +165,10 @@ class Markov:
         return Sq.addfloat(resultdic)
     
     
-    def get_Mulk_Mul_kmer_Pro(self,sequence,sequences,kstart,kend,r):
-        resultdic = self.get_Mul_kmer_Pro(sequence,sequences,kstart,r)
+    def get_Mulk_Mul_kmer_Pro(self,sequences,kstart,kend,r):
+        resultdic = self.get_Mul_kmer_Pro(sequences,kstart,r)
         for k in range(kstart+1,kend+1):
-            tmpresultdic=self.get_Mul_kmer_Pro(sequence,sequences,k,r)
+            tmpresultdic=self.get_Mul_kmer_Pro(sequences,k,r)
             resultdic=dict(resultdic,**tmpresultdic)
         return resultdic
         

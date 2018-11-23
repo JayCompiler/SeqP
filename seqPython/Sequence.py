@@ -124,26 +124,37 @@ class Sequence:
         return lis,freq+np.spacing(1)
     
     ## 统计D2S kmersetdic 表示所有序列所有的kmer集合 O(m*n*k)
-    def getD2SCount(self,sequence,sequences,k,r,flag,kmersetdic):
+    def getD2SCount(self,sequence,sequences,k,r,flag,kmersetdic,kmer_pro):
         ses=[]
         ses.append(sequence)
         # 获得词统计
         lis,count=self.getSeqCount(ses,k,kmersetdic)
+        
+        ## 为lis标准化
+#        for i in range(len(lis)):
+#            lis[i]=self.normdata(lis[i])
+        
+        
         ma=mk.Markov()
         prodic={}
         if flag==False:
             prodic=ma.get_Single_kmer_Pro(sequence,sequences,k,r)
-        else:
-            prodic=ma.get_Mul_kmer_Pro(sequence,sequences,k,r)
+#        else:
+##            prodic=ma.get_Mul_kmer_Pro(sequence,sequences,k,r)
+#            prodic=kmer_pro
         n=len(sequence)
-        for key in prodic:
+        for key in lis[0].keys():
             if lis[0][key]==0:
                 prodic[key]=0
             else:
-                prodic[key]=lis[0][key]-n*prodic[key]
+                prodic[key]=lis[0][key]-n*kmer_pro[key]
         return self.addfloat(prodic)
+    
+
+                    
+
     ## 统计D2Star kmersetdic 表示所有序列所有的kmer集合 O(m*n*k)
-    def getD2StarCount(self,sequence,sequences,k,r,flag,kmersetdic):
+    def getD2StarCount(self,sequence,sequences,k,r,flag,kmersetdic,kmer_pro):
         n=len(sequence)
         ses=[]
         ses.append(sequence)
@@ -153,14 +164,15 @@ class Sequence:
         prodic={}
         if flag==False:
             prodic=ma.get_Single_kmer_Pro(sequence,sequences,k,r)
-        else:
-            prodic=ma.get_Mul_kmer_Pro(sequence,sequences,k,r)
+#        else:
+##            prodic=ma.get_Mul_kmer_Pro(sequence,sequences,k,r)
+#            prodic=kmer_pro
         n=len(sequence)
-        for key in prodic:
-            if lis[0][key]==0:
+        for key in lis[0].keys():
+            if lis[0][key]==0 :
                 prodic[key]=0
             else:
-                prodic[key]=(lis[0][key]-n*prodic[key])/math.sqrt(n*prodic[key])
+                prodic[key]=(lis[0][key]-n*kmer_pro[key])/math.sqrt(n*(kmer_pro[key]+np.spacing(1)))
         return self.addfloat(prodic)
     
     
@@ -168,29 +180,61 @@ class Sequence:
     
     
     ## 统计多个k值 D2S kmersetdic 表示所有序列所有的kmer集合 O((kend-kstart)*m*n*k)
-    def getD2SMulCount(self,sequence,sequences,kstart,kend,r,flag):
+    def getD2SMulCount(self,sequence,sequences,kstart,kend,r,flag,kmer_pro):
         kmerset,kmersetdic=self.getSeqKerSet(sequences,kstart)
-        prodic =self.getD2SCount(sequence,sequences,kstart,r,flag,kmersetdic)
+        prodic =self.getD2SCount(sequence,sequences,kstart,r,flag,kmersetdic,kmer_pro)
         prodic =self.normdata(prodic)
         for k in range(kstart+1,kend+1):
             kmerset,kmersetdic=self.getSeqKerSet(sequences,k)
-            tmpprodic =self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic)
+            tmpprodic =self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
             tmpprodic =self.normdata(tmpprodic)
             prodic=dict(prodic,**tmpprodic)
         return prodic
     
+    
+
+    def getD2SMulCount2(self,sequences,kstart,kend,r,flag,kmer_pro):
+        res=[]
+        for sequence in sequences:
+            kmerset,kmersetdic=self.getSeqKerSet(sequences,kstart)
+            prodic =self.getD2SCount(sequence,sequences,kstart,r,flag,kmersetdic,kmer_pro)
+            prodic =self.normdata(prodic)
+            for k in range(kstart+1,kend+1):
+                kmerset,kmersetdic=self.getSeqKerSet(sequences,k)
+                tmpprodic =self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
+                tmpprodic =self.normdata(tmpprodic)
+                prodic=dict(prodic,**tmpprodic)
+            res.append(prodic)
+        return res
+#                    
+
+
      ## 统计多个k值 D2Star kmersetdic 表示所有序列所有的kmer集合 O((kend-kstart)*m*n*k)
-    def getD2StarMulCount(self,sequence,sequences,kstart,kend,r,flag):
+    def getD2StarMulCount(self,sequence,sequences,kstart,kend,r,flag,kmer_pro):
         kmerset,kmersetdic=self.getSeqKerSet(sequences,kstart)
-        prodic =self.getD2StarCount(sequence,sequences,kstart,r,flag,kmersetdic)
+        prodic =self.getD2StarCount(sequence,sequences,kstart,r,flag,kmersetdic,kmer_pro)
         prodic =self.normdata(prodic)
         for k in range(kstart+1,kend+1):
             kmerset,kmersetdic=self.getSeqKerSet(sequences,k)
-            tmpprodic =self.getD2StarCount(sequence,sequences,k,r,flag,kmersetdic)
+            tmpprodic =self.getD2StarCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
             tmpprodic =self.normdata(tmpprodic)
             prodic=dict(prodic,**tmpprodic)
         return prodic
     
+    
+    def getD2StarMulCount2(self,sequences,kstart,kend,r,flag,kmer_pro):
+        res=[]
+        for sequence in sequences:
+            kmerset,kmersetdic=self.getSeqKerSet(sequences,kstart)
+            prodic =self.getD2StarCount(sequence,sequences,kstart,r,flag,kmersetdic,kmer_pro)
+            prodic =self.normdata(prodic)
+            for k in range(kstart+1,kend+1):
+                kmerset,kmersetdic=self.getSeqKerSet(sequences,k)
+                tmpprodic =self.getD2StarCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
+                tmpprodic =self.normdata(tmpprodic)
+                prodic=dict(prodic,**tmpprodic)
+            res.append(prodic)
+        return res
     # 获取多个k 的频率
     def getMulFreq(self,sequences,kstart,kend):
          kmerset,dic=self.getSeqKerSet(sequences,kstart)
@@ -223,7 +267,30 @@ class Sequence:
         for key in resultdic:
             resultdic[key]=resultdic[key]/suf
         return resultdic
-    
+    ## O(M*n)
+    def getWeight2(self,freqLis):
+        # 获得字典
+        resultdic = dict.copy(freqLis[0]) 
+        for key in resultdic:
+            mea=0.0
+            va=0.0
+            ##求平均值
+            for j in range(len(freqLis)):
+                mea=mea+freqLis[j][key]
+            mea=mea/len(freqLis)
+            
+            for j in range(len(freqLis)):
+                va=(freqLis[j][key]-mea)**2+va
+            va=va/len(freqLis)
+            sd=math.sqrt(va)
+            resultdic[key]=sd
+        # 计算权重    
+        suf=0.0
+        for key in resultdic:
+            suf=resultdic[key]+suf
+        for key in resultdic:
+            resultdic[key]=resultdic[key]/suf
+        return resultdic
     
     
     ## 获取多个k的权重  freqLis表示频率矩阵 时间复杂度O((kend-kstart)*n*m^2)

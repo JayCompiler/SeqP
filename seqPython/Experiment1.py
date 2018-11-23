@@ -7,6 +7,7 @@ Created on Wed Nov 14 10:56:32 2018
 import ReadData
 import Sequence
 import Similarity
+import markov
 from sklearn import metrics
 if __name__=="__main__":
     rd=ReadData.ReadData()
@@ -99,8 +100,12 @@ if __name__=="__main__":
         print(auc)
         
         
-        
+       
         for r in range(0,3):
+             ## 计算马尔可夫概率
+            ma=markov.Markov()
+            kmer_pro=ma.get_Mul_kmer_Pro(datasets,k,r)
+            
             print("--------------D2S相似度方法------------")
             pred=[]
             for data in dataset:
@@ -110,7 +115,7 @@ if __name__=="__main__":
 #                kemrset,kmersetdic=sq.getSeqKerSet(slis,k)
 #                kemrset,kmersetdic=sq.getSeqKerSet(datasets,k)
 #                si=sim.getD2sSim(query[0],data,k,r,False,kmersetdic)
-                si=sim.getD2sSim(query[0],data,k,r,True,kmersetdic)
+                si=sim.getD2sSim(query[0],data,k,r,True,kmersetdic,kmer_pro)
 
                 pred.append(si)
             fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
@@ -126,7 +131,7 @@ if __name__=="__main__":
 #                kemrset,kmersetdic=sq.getSeqKerSet(slis,k)
 #                kemrset,kmersetdic=sq.getSeqKerSet(datasets,k)
 #                si=sim.getD2starSim(query[0],data,k,r,False,datasets,kmersetdic)
-                si=sim.getD2starSim(query[0],data,k,r,True,datasets,kmersetdic)
+                si=sim.getD2starSim(query[0],data,k,r,True,datasets,kmersetdic,kmer_pro)
 
                 pred.append(si)
             fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)

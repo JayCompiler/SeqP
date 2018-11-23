@@ -38,38 +38,56 @@ class Similarity:
         dis=Distance.Distance()
         sim=dis.getMulD2Weight(seqA,seqB,kstart,kend,sequences,weight)
         return 1/sim
+    def getMulD2WeightSim2(self,feaA,feaB,weight):
+        dis=Distance.Distance()
+        sim=dis.getMulD2Weight2(feaA,feaB,weight)
+        return 1/sim
+    
+    
+    
     def getD2WeightSim(self,seqA,seqB,k,sequences,weight):
         dis=Distance.Distance()
         sim=dis.getD2Weight(seqA,seqB,k,sequences,weight)
         return 1/sim
     
     
-    def getD2sSim(self,seqA,seqB,k,r,flag,kmersetdic):
+    def getD2sSim(self,seqA,seqB,k,r,flag,kmersetdic,kmer_pro):
         dis=Distance.Distance()
-        sim=dis.getD2S(seqA,seqB,k,r,flag,kmersetdic)
+        sim=dis.getD2S(seqA,seqB,k,r,flag,kmersetdic,kmer_pro)
         return 1/sim
-    def getD2sWeightSim(self,seqA,seqB,k,r,flag,kmersetdic,weight):
+    
+    def getD2sWeightSim(self,seqA,seqB,k,r,flag,kmersetdic,weight,kmer_pro):
         dis=Distance.Distance()
-        sim=dis.getD2SWeight(seqA,seqB,k,r,flag,kmersetdic,weight)
+        sim=dis.getD2SWeight(seqA,seqB,k,r,flag,kmersetdic,weight,kmer_pro)
         return 1/sim
-    def getMulD2sWeightSim(self,seqA,seqB,kstart,kend,r,flag,sequences,weight):
+    
+    def getMulD2sWeightSim(self,seqA,seqB,kstart,kend,r,flag,sequences,weight,kmer_pro):
         dis=Distance.Distance()
-        sim=dis.getMulD2SWeight(seqA,seqB,kstart,kend,r,flag,sequences,weight)
+        sim=dis.getMulD2SWeight(seqA,seqB,kstart,kend,r,flag,sequences,weight,kmer_pro)
+        return 1/sim
+    
+    def getMulD2sWeightSim2(self,feaA,feaB,weight):
+        dis=Distance.Distance()
+        sim=dis.getMulD2SWeight2(feaA,feaB,weight)
         return 1/sim
     
     
-    def getD2starSim(self,seqA,seqB,k,r,flag,sequences,kmersetdic):
+    def getD2starSim(self,seqA,seqB,k,r,flag,sequences,kmersetdic,kmer_pro):
         dis=Distance.Distance()
-        sim=dis.getD2Star(seqA,seqB,k,r,flag,sequences,kmersetdic)
+        sim=dis.getD2Star(seqA,seqB,k,r,flag,sequences,kmersetdic,kmer_pro)
         return 1/sim
-    def getMulD2starWeightSim(self,seqA,seqB,kstart,kend,r,flag,sequences,weight):
+    def getMulD2starWeightSim(self,seqA,seqB,kstart,kend,r,flag,sequences,weight,kmer_pro):
         dis=Distance.Distance()
-        sim=dis.getMulD2StarWeight(seqA,seqB,kstart,kend,r,flag,sequences,weight)
+        sim=dis.getMulD2StarWeight(seqA,seqB,kstart,kend,r,flag,sequences,weight,kmer_pro)
+        return 1/sim
+    def getMulD2starWeightSim2(self,feaA,feaB,weight):
+        dis=Distance.Distance()
+        sim=dis.getMulD2StarWeight2(feaA,feaB,weight)
         return 1/sim
     
-    def getD2starWeightSim(self,seqA,seqB,k,r,flag,sequences,kmersetdic,weight):
+    def getD2starWeightSim(self,seqA,seqB,k,r,flag,sequences,kmersetdic,weight,kmer_pro):
         dis=Distance.Distance()
-        sim=dis.getD2StarWeight(seqA,seqB,k,r,flag,sequences,kmersetdic,weight)
+        sim=dis.getD2StarWeight(seqA,seqB,k,r,flag,sequences,kmersetdic,weight,kmer_pro)
         return 1/sim
     
 

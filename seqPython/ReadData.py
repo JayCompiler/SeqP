@@ -15,7 +15,7 @@ class ReadData:
         fils=[]
         for dirpath, dirnames, filenames in os.walk(file_dir):  
             for file in filenames:  
-                if os.path.splitext(file)[1] == '.fasta':  
+                if os.path.splitext(file)[1] == '.fasta'or os.path.splitext(file)[1] == '.fa':  
                     L.append(os.path.join(dirpath, file)) 
                     fils.append(file)
         return L,fils
@@ -43,6 +43,43 @@ class ReadData:
                     else:
                         label.append(1)
         return self.normdata(query),self.normdata(data),label
+    
+    
+    def getData2(self,file_dir):
+        ## 获取fRS目录下的文件
+        L,files=self.file_name("fRS")
+        dataset=[]
+        pos=[]
+        neg=[]
+        data=[]
+        for file in L:
+            if file_dir in file:
+                with open(file) as a:
+                    data=a.readlines()
+        count=0
+        while count <len(data):
+            tmp=""
+            ## 提取数据集，当开头不为>，或者count==len(data)-1
+            while data[count][0]!=">" or count==len(data)-1:
+                tmp=tmp+data[count].strip('\n')
+                count=count+1
+                if count==len(data):
+                    break
+            if tmp!="":
+#                print(tmp)
+                dataset.append(tmp)
+            else:
+                count=count+1
+        ## 去除不必要的字符
+        dataset=self.normdata(dataset)
+        length=len(dataset)
+        for i in range(int(length/2)):
+            pos.append(dataset[i])
+        for i in range(int(length/2),length):
+            neg.append(dataset[i])
+        return dataset,pos,neg
+    
+    
     ## 去掉序列中的的单词
     def normdata(self,lis):
         newlis=[]
@@ -73,11 +110,14 @@ class ReadData:
 
 if __name__=="__main__":
     rd=ReadData()
-    print(rd.normdata(["ATACTASSGDGASDA","TACGASDJAS"]))
-#    query,data,label=rd.getData("dataset1")
-#    print(query)
-#    print(data)
-#    print(label)
-#    for da in data:
-#        print(da)
-#    
+    pos,neg=rd.getData2("fly_blastoderm")
+    print(pos)
+#    print(len(L))
+    print(len(pos))
+    print(len(neg))
+#    print(len(L))
+#    L,files=rd.file_name("fRS")
+#    print(L)
+#    print(files)
+#    print("ss1" in "sss")
+#    print(rd.normdata(["ATCG","TACGASDJAS"]))

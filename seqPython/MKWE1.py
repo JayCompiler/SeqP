@@ -11,22 +11,26 @@ import Sequence
 import Similarity
 from sklearn import metrics
 import time
-
+import markov
 if __name__=="__main__":
-
-    
-    
     rd=ReadData.ReadData()
     query,dataset,label=rd.getData("dataset1")
     sim=Similarity.Similarity()
     sq=Sequence.Sequence()
     datasets=list.copy(dataset)
     datasets.append(query[0])
-    kstart=7
-    kend=8
+    kstart=2
+    kend=2
+    flag=False
+    start=time.process_time()
     weight = sq.getMulWeight(datasets,kstart,kend)
+    end=time.process_time()
+    print("计算权重时间：",(end-start))
     print(len(weight))
     print("--------------MulD2Weight相似度方法------------")
+    
+   
+    
     start = time.process_time()
     pred=[]
     for data in dataset:
@@ -43,6 +47,14 @@ if __name__=="__main__":
     
     
     for r in range(0,3):
+        ## 计算kmer概率
+        start=time.process_time()
+        ma=markov.Markov()
+        kmer_pro=ma.get_Mulk_Mul_kmer_Pro(datasets,kstart,kend,r)
+        end=time.process_time()
+        print("计算马尔可夫概率时间：",(end-start))
+        
+        
         print("--------------MulD2S相似度方法------------")
         start = time.process_time()
         pred=[]
@@ -50,7 +62,7 @@ if __name__=="__main__":
             slis=[]
             slis.append(query[0])
             slis.append(data)
-            si=sim.getMulD2sWeightSim(query[0],data,kstart,kend,r,True,datasets,weight)
+            si=sim.getMulD2sWeightSim(query[0],data,kstart,kend,r,flag,datasets,weight,kmer_pro)
             pred.append(si)
         fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
         auc=metrics.auc(fpr, tpr)    
@@ -65,7 +77,7 @@ if __name__=="__main__":
             slis=[]
             slis.append(query[0])
             slis.append(data)
-            si=sim.getMulD2starWeightSim(query[0],data,kstart,kend,r,True,datasets,weight)
+            si=sim.getMulD2starWeightSim(query[0],data,kstart,kend,r,flag,datasets,weight,kmer_pro)
             pred.append(si)
         fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
         auc=metrics.auc(fpr, tpr)  
