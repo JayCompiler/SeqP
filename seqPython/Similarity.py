@@ -34,6 +34,8 @@ class Similarity:
         dis=Distance.Distance()
         sim=dis.getD2(seqA,seqB,k)
         return 1/sim
+    
+    
     def getMulD2WeightSim(self,seqA,seqB,kstart,kend,sequences,weight):
         dis=Distance.Distance()
         sim=dis.getMulD2Weight(seqA,seqB,kstart,kend,sequences,weight)

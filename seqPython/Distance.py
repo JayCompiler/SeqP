@@ -121,7 +121,7 @@ class Distance:
         for i in range(freq.shape[1]):
             ma=max(ma,abs(freq[0,i]-freq[1,i]))
         return ma
-    
+    # D2
     def getD2(self,seqA,seqB,k):
         seqLis=[]
         # 变成list
@@ -135,6 +135,25 @@ class Distance:
         su=0.0
         for i in range(count.shape[1]):
             su=su+count[0,i]*count[1,i]
+        return 1/(su+np.spacing(1))
+    
+    
+    
+        # D2
+    def getD2_single(self,seqA,seqB,kstart,kend):
+        seqLis=[]
+        # 变成list
+        seqLis.append(seqA)
+        seqLis.append(seqB)
+        Sq =Sequence.Sequence()
+        # 获取 关键字集合 字典dic
+        countLis=Sq.getMulCount(seqLis,kstart,kend,seqLis)
+#        kmerSet,dic =Sq.getSeqKerSet(seqLis,k)
+#        lisFea,count=Sq.getSeqCount(seqLis,k,dic)
+        #计算D2
+        su=0.0
+        for key in range(dict.keys(countLis[0])):
+            su=su+countLis[0,key]*countLis[1,key]
         return 1/(su+np.spacing(1))
     
     # 输入参数为 序列A，B，kmer长度k，马尔可夫阶数r,是否用全局马尔可夫flag 标志，True表示全局，False表示单条
@@ -243,8 +262,8 @@ class Distance:
         if flag==False:
             lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,dic)
             lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,dic)
-            kmerPA=Ma.get_Single_kmer_Pro(seqA,seqLis,k,r)
-            kmerPB=Ma.get_Single_kmer_Pro(seqB,seqLis,k,r)
+#            kmerPA=Ma.get_Single_kmer_Pro(seqA,seqLis,k,r)
+#            kmerPB=Ma.get_Single_kmer_Pro(seqB,seqLis,k,r)
         else:
             lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,kmersetdic,kmer_pro)
             lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,kmersetdic,kmer_pro)
@@ -283,7 +302,7 @@ class Distance:
         return 1/(su+np.spacing(1))
     
     
-    ## 多个k值的带权重的D2s
+    ## 多个k值的带权重的D2s 时间复杂度高，空间复杂度低
     def getMulD2SWeight(self,seqA,seqB,kstart,kend,r,flag,sequences,weight,kmer_pro):
         seqLis=[]
         # 变成list
@@ -297,12 +316,12 @@ class Distance:
         #计算D2S
         su=0.0
         for key in dict.keys(lisFeaA):
-#            su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lisFeaA[key]**2+lisFeaB[key]**2)*weight[key]
-            su=su+(lisFeaA[key]*lisFeaB[key])*weight[key]
+            su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lisFeaA[key]**2+lisFeaB[key]**2)*weight[key]
+#            su=su+(lisFeaA[key]*lisFeaB[key])*weight[key]
 
         return 1/(su+np.spacing(1))
     
-     ## 多个k值的带权重的D2s  
+     ## 多个k值的带权重的D2s  参数简化版， 时间复杂度低，空间复杂度高
     def getMulD2SWeight2(self,feaA,feaB,weight):
         #计算D2S
         su=0.0
