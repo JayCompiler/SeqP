@@ -37,16 +37,16 @@ if __name__=="__main__":
      
      
      
-        #top 参数 153
-#    name="fly_pns" 
+        #top 参数 253
+    name="fly_pns" 
 #or
-#    name= "human_HBB"
+
 
         
         
         
                 #top 参数 136
-    name="fly_eye" 
+#    name="fly_eye" 
 #or "human_HBB" 
                 
                 
@@ -59,9 +59,9 @@ if __name__=="__main__":
     datasets,pos,neg=rd.getData2(name)
     
     Sim=Similarity.Similarity()
-    k=4
+    k=5
     flag=True
-    top=136
+    top=253
     sq=Sequence.Sequence()
     ma=markov.Markov()
 

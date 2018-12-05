@@ -37,12 +37,13 @@ if __name__=="__main__":
      
      
         #top 参数 153
-#    name="fly_pns" or "human_HBB"
+    name="fly_pns" 
+
         
         
         
                 #top 参数 136
-    name="fly_eye" 
+#    name="fly_eye" 
 #or "human_HBB" 
 #    name="human_HBB"
 
@@ -63,7 +64,7 @@ if __name__=="__main__":
     Sim=Similarity.Similarity()
     kstart=2
     kend=8
-    top=136
+    top=253
     flag=True
     sq=Sequence.Sequence()
 

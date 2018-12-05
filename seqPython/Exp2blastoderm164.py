@@ -19,12 +19,12 @@ def getSim(Lis):
 if __name__=="__main__":
     rd=ReadData.ReadData()
 #    datasets,pos,neg=rd.getData2("fly_blastoderm")
-    datasets,pos,neg=rd.getData2("human_HBB")
+    datasets,pos,neg=rd.getData2("fly_pns")
     Sim=Similarity.Similarity()
     kstart=2
-    kend=8
+    kend=7
     flag=True
-    top=136
+    top=253
     sq=Sequence.Sequence()
     
     start = time.process_time()
