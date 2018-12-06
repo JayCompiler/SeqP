@@ -11,7 +11,7 @@ import Similarity
 import time
 import markov
 
-## 返回列表的第2个 元素，即相似度
+## 返回列表的第2个 元素，即相似度   全部markov 概率模型
 def getSim(Lis):
     return Lis[1]
 

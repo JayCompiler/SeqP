@@ -20,7 +20,7 @@ import Similarity
 import time
 import markov
 
-## 返回列表的第2个 元素，即相似度
+## 返回列表的第2个 元素，即相似度  单条链为markov模型
 def getSim(Lis):
     return Lis[1]
 
@@ -37,13 +37,13 @@ if __name__=="__main__":
      
      
         #top 参数 153
-    name="fly_pns" 
+#    name="fly_pns" 
 
         
         
         
                 #top 参数 136
-#    name="fly_eye" 
+    name="fly_eye" 
 #or "human_HBB" 
 #    name="human_HBB"
 
@@ -63,8 +63,8 @@ if __name__=="__main__":
 #    print(len(datasets))
     Sim=Similarity.Similarity()
     kstart=2
-    kend=8
-    top=253
+    kend=6
+    top=136
     flag=True
     sq=Sequence.Sequence()
 
@@ -87,11 +87,11 @@ if __name__=="__main__":
             negSeqLis.append(neg[i])
             negSeqLis.append(neg[j])
             # 获得特征
-            posD2Lis=sq.getMulCount_nonorm(posSeqLis,kstart,kend,posSeqLis)
-            negD2Lis=sq.getMulCount_nonorm(negSeqLis,kstart,kend,negSeqLis)
+            posD2Lis=sq.getMulCount(posSeqLis,kstart,kend,posSeqLis)
+            negD2Lis=sq.getMulCount(negSeqLis,kstart,kend,negSeqLis)
             ## 计算权重
-            posweight = sq.getMulWeight_nonorm(posSeqLis,kstart,kend) 
-            negweight = sq.getMulWeight_nonorm(negSeqLis,kstart,kend)
+            posweight = sq.getMulWeight_suf(posSeqLis,kstart,kend) 
+            negweight = sq.getMulWeight_suf(negSeqLis,kstart,kend)
             # getMulD2WeightSim2 接受一切处理好的特征
             posSim=Sim.getMulD2WeightSim2(posD2Lis[0],posD2Lis[1],posweight)
             negSim=Sim.getMulD2WeightSim2(negD2Lis[0],negD2Lis[1],negweight)

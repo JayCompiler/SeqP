@@ -256,9 +256,9 @@ class Distance:
         # 获取 关键字集合 字典dic
         kmerSet,dic =Sq.getSeqKerSet(seqLis,k)
         # 获取kmer概率
-        Ma=markov.Markov()
-        kmerPA={}
-        kmerPB={}
+#        Ma=markov.Markov()
+#        kmerPA={}
+#        kmerPB={}
         if flag==False:
             lisFeaA=Sq.getD2SCount(seqA,seqLis,k,r,flag,dic)
             lisFeaB=Sq.getD2SCount(seqB,seqLis,k,r,flag,dic)
@@ -298,7 +298,7 @@ class Distance:
     def getMulD2Weight2(self,feaA,feaB,weight):
         su=0.0
         for key in dict.keys(feaA):
-            su=su+feaA[key]*feaB[key]*weight[key]
+            su=su+feaA[key]*feaB[key]*weight[key]## 改一下
         return 1/(su+np.spacing(1))
     
     
@@ -336,7 +336,7 @@ class Distance:
     def getMulD2StarWeight2(self,feaA,feaB,weight):
         su=0.0
         for key in dict.keys(feaA):
-            su=su+(feaA[key]*feaB[key])*weight[key]
+            su=su+abs((feaA[key]*feaB[key])*weight[key]) ##改
             
         return 1/(su+np.spacing(1))
     

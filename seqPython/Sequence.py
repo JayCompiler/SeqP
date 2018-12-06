@@ -133,6 +133,23 @@ class Sequence:
 #                tmpcountLis[i]=self.normdata(tmpcountLis[i])
             for i in range(len(countLis)):
                 countLis[i]=dict(countLis[i],**(tmpcountLis[i]))
+         return countLis
+     
+         # 获取多个k 的频数 时间复杂度 为O((kend-kstart)*mn) 不标准化, 最后norm
+    def getMulCount_suf(self,seqLis,kstart,kend,sequences):
+         kmerset,dic=self.getSeqKerSet(sequences,kstart)
+         countLis,count=self.getSeqCount(seqLis,kstart,dic)
+         ## 时间复杂度为O(mn)
+#         for i in range(len(countLis)):
+#             countLis[i]=self.normdata(countLis[i])
+             
+         for k in range(kstart+1,kend+1):
+            kmerset,dic=self.getSeqKerSet(sequences,k)
+            tmpcountLis,count=self.getSeqCount(seqLis,k,dic)
+#            for i in range(len(tmpcountLis)):
+#                tmpcountLis[i]=self.normdata(tmpcountLis[i])
+            for i in range(len(countLis)):
+                countLis[i]=dict(countLis[i],**(tmpcountLis[i]))
             countLis[i]=self.normdata(countLis[i])
          return countLis
      
@@ -573,6 +590,8 @@ class Sequence:
         freqLis=self.getMulFreq_mid(sequences,kstart,kend)
         resultdic=self.getWeight(freqLis)
         return resultdic
+    
+    
     
        ## 获取多个k的权重  freqLis表示频率矩阵 时间复杂度O((kend-kstart)*n*m^2)
        ## 无norm
