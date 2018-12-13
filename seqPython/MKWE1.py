@@ -16,14 +16,18 @@ if __name__=="__main__":
     rd=ReadData.ReadData()
     query,dataset,label=rd.getData("dataset1")
     sim=Similarity.Similarity()
+    
+            
+        
     sq=Sequence.Sequence()
     datasets=list.copy(dataset)
     datasets.append(query[0])
+#    print(label)
     kstart=2
     kend=2
     flag=False
     start=time.process_time()
-    weight = sq.getMulWeight(datasets,kstart,kend)
+    weight = sq.getMulWeight_mid(datasets,kstart,kend)
     end=time.process_time()
     print("计算权重时间：",(end-start))
     print(len(weight))
@@ -36,6 +40,7 @@ if __name__=="__main__":
     for data in dataset:
         si=sim.getMulD2WeightSim(query[0],data,kstart,kend,datasets,weight)
         pred.append(si)
+    
 #    print(pred)
     fpr, tpr, thresholds = metrics.roc_curve(label, pred,pos_label=1)
     auc=metrics.auc(fpr, tpr)  

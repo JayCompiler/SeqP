@@ -12,7 +12,7 @@ Created on Thu Nov 22 10:50:07 2018
 @author: Yzi
 
 """
-
+## 原始的D2
 import ReadData
 import Sequence
 import Similarity

@@ -5,7 +5,7 @@ Created on Wed Nov 14 10:29:12 2018
 @author: Yzi
 """
 
-import numpy as np
+#import numpy as np
 import os
 
 class ReadData:
@@ -15,10 +15,12 @@ class ReadData:
         fils=[]
         for dirpath, dirnames, filenames in os.walk(file_dir):  
             for file in filenames:  
-                if os.path.splitext(file)[1] == '.fasta'or os.path.splitext(file)[1] == '.fa':  
+                if os.path.splitext(file)[1] == '.fasta'or os.path.splitext(file)[1] == '.fa' or os.path.splitext(file)[1] == '.txt':  
                     L.append(os.path.join(dirpath, file)) 
                     fils.append(file)
         return L,fils
+    
+
     
     ## 获取第一个数据集合
     def getData(self,file_dir):
@@ -80,6 +82,49 @@ class ReadData:
         return dataset,pos,neg
     
     
+    ## 读取第三个文件的数据集和文件名
+    def getData3(self,file_dir):
+        ## 获取fRS目录下的文件
+        L,files=self.file_name("e3")
+        dataset=[]
+#        pos=[]
+#        neg=[]
+        data=[]
+        sequenceName=[]
+        for file in L:
+            if file_dir in file:
+                with open(file) as a:
+                    data=a.readlines()
+        count=0
+        while count <len(data):
+            tmp=""
+            ## 提取数据集，当开头不为>，或者count==len(data)-1
+            if data[count][0]==">":
+                sequenceName.append(data[count][1:].strip('\n'))
+            while data[count][0]!=">" or count==len(data)-1:
+                tmp=tmp+data[count].strip('\n')
+                count=count+1
+                if count==len(data):
+                    break
+            if tmp!="":
+#                print(tmp)
+                dataset.append(tmp)
+            else:
+                count=count+1
+        ## 去除不必要的字符
+        dataset=self.normdata(dataset)
+        for i in range(len(sequenceName)):
+            if len(sequenceName[i])>=10:
+                sequenceName[i]=sequenceName[i][0:10]
+            else:
+                c=10-len(sequenceName[i])
+                p=""
+                for j in range(c):
+                    p=p+" "
+                sequenceName[i]=sequenceName[i]+p
+        return dataset,sequenceName  
+    
+    
     ## 去掉序列中的的单词
     def normdata(self,lis):
         newlis=[]
@@ -110,7 +155,7 @@ class ReadData:
 
 if __name__=="__main__":
     rd=ReadData()
-    pos,neg=rd.getData2("fly_blastoderm")
+    data,pos,neg=rd.getData2("fly_blastoderm")
     print(pos)
 #    print(len(L))
     print(len(pos))

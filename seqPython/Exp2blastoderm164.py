@@ -5,7 +5,7 @@ Created on Thu Nov 22 10:50:07 2018
 @author: Yzi
 
 """
-
+## 多个k值的 以全部数据集求权重和特征
 import ReadData
 import Sequence
 import Similarity

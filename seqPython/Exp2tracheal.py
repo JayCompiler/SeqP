@@ -10,7 +10,7 @@ import Sequence
 import Similarity
 import time
 import markov
-
+## 尝试多个规范化数据整合方式
 ## 返回列表的第2个 元素，即相似度   全部markov 概率模型
 def getSim(Lis):
     return Lis[1]

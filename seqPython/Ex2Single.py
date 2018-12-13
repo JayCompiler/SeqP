@@ -13,7 +13,7 @@ Created on Sat Nov 24 14:06:56 2018
 @author: Yzi
 单条 markov
 """
-
+## 以单个两个序列求权重和特征
 import ReadData
 import Sequence
 import Similarity
