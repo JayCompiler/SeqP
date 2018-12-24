@@ -118,12 +118,12 @@ if __name__=="__main__":
 
     
     for r in range(0,3):
-        start=time.process_time()
-        ma=markov.Markov()
-        kmer_propos=ma.get_Mulk_Mul_kmer_Pro(pos,kstart,kend,r)
-        kmer_proneg=ma.get_Mulk_Mul_kmer_Pro(neg,kstart,kend,r)
-        end=time.process_time()
-        print("计算马尔可夫概率时间：",(end-start))
+#        start=time.process_time()
+#        ma=markov.Markov()
+#        kmer_propos=ma.get_Mulk_Mul_kmer_Pro(pos,kstart,kend,r)
+#        kmer_proneg=ma.get_Mulk_Mul_kmer_Pro(neg,kstart,kend,r)
+#        end=time.process_time()
+#        print("计算马尔可夫概率时间：",(end-start))
         print("--------------------------MulD2s-----------------------")
         print("kstart=",kstart," kend=",kend," r=",r)
         

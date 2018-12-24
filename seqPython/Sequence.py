@@ -347,7 +347,7 @@ class Sequence:
             res.append(prodic)
         return res
     
-    ## 后norm
+    ## 不norm
     def getD2SMulCount_nonorm(self,sequences,kstart,kend,r,flag,kmer_pro):
         res=[]
         ## 每一条序列的多个k值
@@ -556,6 +556,8 @@ class Sequence:
         for key in resultdic:
             resultdic[key]=resultdic[key]/suf
         return resultdic
+#    def getWeightFromSeq(self,sequences):
+        
     
     ## O(M*n)  方差
     def getWeight2(self,freqLis):

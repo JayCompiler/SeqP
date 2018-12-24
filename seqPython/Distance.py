@@ -25,6 +25,14 @@ class Distance:
         for key in kmerSet:
             su=(lisFea[0][key]-lisFea[1][key])**2+su
         return math.sqrt(su)
+    
+     ## 欧式距离
+    def EuD_feature(self,seqA,seqB):
+        su=0.0
+        for key in dict.keys(seqA):
+            su=(seqA[key]-seqB[key])**2+su
+        return math.sqrt(su)
+    
     ## 曼哈顿距离
     def manhattan(self,seqA,seqB,k):
         seqLis=[]
@@ -39,6 +47,24 @@ class Distance:
         for key in kmerSet:
             su=abs(lisFea[0][key]-lisFea[1][key])+su
         return su
+    
+     ## 曼哈顿距离
+    def manhattan_feature(self,seqA,seqB):
+   
+        su=0.0
+        for key in dict.keys(seqA):
+            su=abs(seqA[key]-seqB[key])+su
+        return su
+    
+     ## KLD 相对熵距离
+    def KLD_feature(self,seqA,seqB):
+        k1=0.0
+        k2=0.0
+        for key in dict.keys(seqA):
+            k1=k1+seqA[key]*math.log2(seqA[key]/(seqB[key]+np.spacing(1))+np.spacing(1))
+            k2=k2+seqB[key]*math.log2(seqB[key]/(seqA[key]+np.spacing(1))+np.spacing(1))
+        return (k1+k2)/2
+    
     
      ## KLD 相对熵距离
     def KLD(self,seqA,seqB,k):
@@ -87,6 +113,28 @@ class Distance:
         pcc=cov/(stA*stB)
         return abs(1/pcc)
     
+    
+         ## KLD 相对熵距离
+    def pcc_feature(self,seqA,seqB): 
+        meanA=0.0
+        meanB=0.0
+        for key in dict.keys(seqA):
+            meanA=seqA[key]+meanA
+            meanB=seqB[key]+meanB
+        meanA=meanA/len(seqA)
+        meanB=meanB/len(seqB)
+        #计算协方差
+        cov=0.0
+        for key in dict.keys(seqA):
+            cov=cov+(seqA[key]-meanA)*(seqB[key]-meanB)
+        cov=cov/(len(seqA)-1)
+        # 计算方差
+        stA=np.std(list(seqA.values()),ddof=1)
+        stB=np.std(list(seqB.values()),ddof=1)
+        #计算pcc
+        pcc=cov/(stA*stB)
+        return abs(1/pcc)
+    
     def cosine(self,seqA,seqB,k):
         seqLis=[]
         # 变成list
@@ -107,6 +155,19 @@ class Distance:
         cosine=su/(math.sqrt(LA)*math.sqrt(LB))
         return abs(1/cosine)
     
+    def cosine_feature(self,seqA,seqB):
+    
+        #计算余弦距离
+        LA=0.0
+        LB=0.0
+        su=0.0
+        for key in dict.keys(seqA):
+            su=su+seqA[key]*seqB[key]
+            LA=seqA[key]**2+LA
+            LB=seqB[key]**2+LB
+        cosine=su/(math.sqrt(LA)*math.sqrt(LB))
+        return abs(1/cosine)
+    
     def chebyshev(self,seqA,seqB,k):
         seqLis=[]
         # 变成list
@@ -121,6 +182,22 @@ class Distance:
         for i in range(freq.shape[1]):
             ma=max(ma,abs(freq[0,i]-freq[1,i]))
         return ma
+    
+    
+    def chebyshev_feature(self,seqA,seqB):
+        
+        #计算切比雪夫距离
+        ma=-sys.maxsize-1
+        for key in dict.keys(seqA):
+            ma=max(ma,abs(seqA[key]-seqB[key]))
+        return ma
+    
+    
+    
+    
+    
+    
+    
     # D2
     def getD2(self,seqA,seqB,k):
         seqLis=[]
@@ -135,6 +212,16 @@ class Distance:
         su=0.0
         for i in range(count.shape[1]):
             su=su+count[0,i]*count[1,i]
+        return 1/(su+np.spacing(1))
+    
+    
+        # D2
+    def getD2_feature(self,seqA,seqB):
+    
+        #计算D2
+        su=0.0
+        for key in dict.keys(seqA):
+            su=su+seqA[key]*seqB[key]
         return 1/(su+np.spacing(1))
     
     
@@ -177,6 +264,16 @@ class Distance:
         for key in dict.keys(lisFeaA):
             su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lisFeaA[key]**2+lisFeaB[key]**2)
         return 1/(su+np.spacing(1))
+    
+    
+    def getD2S_feature(self,seqA,seqB):
+        #计算D2S
+        su=0.0
+        for key in dict.keys(seqA):
+            su=su+(seqA[key]*seqB[key])/math.sqrt(seqA[key]**2+seqB[key]**2)
+        return 1/(su+np.spacing(1))
+    
+   
     
     # 输入参数为 序列A，B，kmer长度k，马尔可夫阶数r,是否用全局马尔可夫flag 标志，True表示全局，False表示单条
     # kmerset 表示多少条链参与比较
@@ -327,8 +424,8 @@ class Distance:
         su=0.0
         for key in dict.keys(feaA):
             if feaA[key]**2+feaB[key]**2!=0:
-#                su=su+(feaA[key]*feaB[key])/math.sqrt(feaA[key]**2+feaB[key]**2)*weight[key]
-                su=su+(feaA[key]*feaB[key])*weight[key]
+                su=su+(feaA[key]*feaB[key])/math.sqrt(feaA[key]**2+feaB[key]**2)*weight[key]
+#                su=su+(feaA[key]*feaB[key])*weight[key]
 
         return 1/(su+np.spacing(1))
     

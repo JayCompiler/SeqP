@@ -30,14 +30,14 @@ if __name__=="__main__":
     testlabel=[]
     poscount=0
     negcount=0
-    counttrain=0
-    counttest=0
+#    counttrain=0
+#    counttest=0
     
     for i in range(len(dataset)):
         if (label[i]==1 and poscount<15) or (label[i]==0 and negcount<14):
             trainset.append(dataset[i])
             trainlabel.append(label[i])
-            counttrain=counttrain+1
+#            counttrain=counttrain+1
             if label[i]==1:
                 poscount=poscount+1
             else:
@@ -55,7 +55,7 @@ if __name__=="__main__":
     datasets.append(query[0])
 #    print(label)
     kstart=2
-    kend=6
+    kend=5
     flag=False
     start=time.process_time()
     ## 改成 训练集得权重
