@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec 24 09:13:50 2018
+Created on Wed Jan  2 14:16:53 2019
 
-
-
-使用z-score 标准化
-@author: Yzi  
+@author: YZi
 """
+
 
 import random
 
@@ -64,10 +62,10 @@ size=len(d2freLis)
 ## 标准化后合并
 freqLis=[None]*size
 for i in range(len(d2freLis)):
-    freqLis[i]=dict(sq.normdata(d2freLis[i]),**(sq.normdata(d3freLis[i])))
-    freqLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d4freLis[i])))
-    freqLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d5freLis[i])))
-    freqLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d6freLis[i])))
+    freqLis[i]=dict(sq.normdata_max_min(d2freLis[i]),**(sq.normdata_max_min(d3freLis[i])))
+    freqLis[i]=dict(sq.normdata_max_min(freqLis[i]),**(sq.normdata_max_min(d4freLis[i])))
+    freqLis[i]=dict(sq.normdata_max_min(freqLis[i]),**(sq.normdata_max_min(d5freLis[i])))
+    freqLis[i]=dict(sq.normdata_max_min(freqLis[i]),**(sq.normdata_max_min(d6freLis[i])))
 
 # 计算权重
 weightMax=sq.getWeight(freqLis)
@@ -82,11 +80,11 @@ d6countLis,d6arc=sq.getSeqCount(datasets,6,d6dic)
 
 ## 标准化过程： 标准化 count
 for i in range(len(datasets)):
-    d2countLis[i]=sq.normdata(d2countLis[i])
-    d3countLis[i]=sq.normdata(d3countLis[i])
-    d4countLis[i]=sq.normdata(d4countLis[i])
-    d5countLis[i]=sq.normdata(d5countLis[i])
-    d6countLis[i]=sq.normdata(d6countLis[i])
+    d2countLis[i]=sq.normdata_max_min(d2countLis[i])
+    d3countLis[i]=sq.normdata_max_min(d3countLis[i])
+    d4countLis[i]=sq.normdata_max_min(d4countLis[i])
+    d5countLis[i]=sq.normdata_max_min(d5countLis[i])
+    d6countLis[i]=sq.normdata_max_min(d6countLis[i])
     
 
 ## 构造训练集合和测试集合

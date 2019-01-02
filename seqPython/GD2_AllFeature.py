@@ -139,19 +139,26 @@ def evalOneMax(individual):
     for i in range(len(weight)):
         weight[i]=(weight[i]+np.spacing(1))/su+np.spacing(1)
     sim=[]
+    
     ## 计算权重
     for i in range(len(trainset)):
+        count=0
         tmp_sim=0
-        for key in dict.keys(d2countLis[0]):
-            tmp_sim=tmp_sim+d2countLis[i][key]*d2countLis[len(d2countLis)-1][key]*w2dic[key]*weight[0]
-        for key in dict.keys(d3countLis[0]):
-            tmp_sim=tmp_sim+d3countLis[i][key]*d3countLis[len(d2countLis)-1][key]*w3dic[key]*weight[1]
-        for key in dict.keys(d4countLis[0]):
-            tmp_sim=tmp_sim+d4countLis[i][key]*d4countLis[len(d2countLis)-1][key]*w4dic[key]*weight[2]
-        for key in dict.keys(d5countLis[0]):
-            tmp_sim=tmp_sim+d5countLis[i][key]*d5countLis[len(d2countLis)-1][key]*w5dic[key]*weight[3]
-        for key in dict.keys(d6countLis[0]):
-            tmp_sim=tmp_sim+d6countLis[i][key]*d6countLis[len(d2countLis)-1][key]*w6dic[key]*weight[4]
+        for key in sorted(d2countLis[0]):
+            tmp_sim=tmp_sim+d2countLis[i][key]*d2countLis[len(d2countLis)-1][key]*w2dic[key]*weight[count]
+            count=count+1
+        for key in sorted(d3countLis[0]):
+            tmp_sim=tmp_sim+d3countLis[i][key]*d3countLis[len(d2countLis)-1][key]*w3dic[key]*weight[count]
+            count=count+1
+        for key in sorted(d4countLis[0]):
+            tmp_sim=tmp_sim+d4countLis[i][key]*d4countLis[len(d2countLis)-1][key]*w4dic[key]*weight[count]
+            count=count+1
+        for key in sorted(d5countLis[0]):
+            tmp_sim=tmp_sim+d5countLis[i][key]*d5countLis[len(d2countLis)-1][key]*w5dic[key]*weight[count]
+            count=count+1
+        for key in sorted(d6countLis[0]):
+            tmp_sim=tmp_sim+d6countLis[i][key]*d6countLis[len(d2countLis)-1][key]*w6dic[key]*weight[count]
+            count=count+1
         sim.append(tmp_sim)
 
     auc=roc_auc_score(trainlabel, sim)
@@ -202,7 +209,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.5, 40
+    CXPB, MUTPB, NGEN = 0.6, 0.5, 70
     
     
     print("Start of evolution")
@@ -289,19 +296,43 @@ if __name__ == "__main__":
     print(w)
     print(len(w))
     sim=[]
-    ## 计算权重  结合遗传算法
+    ## 统计内积 大小
+    inner2=[]
+    inner3=[]
+    inner4=[]
+    inner5=[]
+    inner6=[]
+    
+    
     for i in range(len(testset)):
         tmp_sim=0
-        for key in dict.keys(d2countLisTest[0]):
-            tmp_sim=tmp_sim+d2countLisTest[i][key]*d2countLisTest[len(d2countLisTest)-1][key]*w2dicTest[key]*w[0]
-        for key in dict.keys(d3countLisTest[0]):
-            tmp_sim=tmp_sim+d3countLisTest[i][key]*d3countLisTest[len(d2countLisTest)-1][key]*w3dicTest[key]*w[1]
-        for key in dict.keys(d4countLisTest[0]):
-            tmp_sim=tmp_sim+d4countLisTest[i][key]*d4countLisTest[len(d2countLisTest)-1][key]*w4dicTest[key]*w[2]
-        for key in dict.keys(d5countLisTest[0]):
-            tmp_sim=tmp_sim+d5countLisTest[i][key]*d5countLisTest[len(d2countLisTest)-1][key]*w5dicTest[key]*w[3]
-        for key in dict.keys(d6countLisTest[0]):
-            tmp_sim=tmp_sim+d6countLisTest[i][key]*d6countLisTest[len(d2countLisTest)-1][key]*w6dicTest[key]*w[4]
+        count=0
+        ti2=0
+        ti3=0
+        ti4=0
+        ti5=0
+        ti6=0
+        
+        for key in sorted(d2countLisTest[0]):
+            tmp_sim=tmp_sim+d2countLisTest[i][key]*d2countLisTest[len(d2countLisTest)-1][key]*w2dicTest[key]*w[count]
+            ti2=ti2+d2countLisTest[i][key]*d2countLisTest[len(d2countLisTest)-1][key]
+            count=count+1
+        for key in sorted(d3countLisTest[0]):
+            tmp_sim=tmp_sim+d3countLisTest[i][key]*d3countLisTest[len(d3countLisTest)-1][key]*w3dicTest[key]*w[count]
+            ti3=ti3+d3countLisTest[i][key]*d3countLisTest[len(d3countLisTest)-1][key]
+            count=count+1
+        for key in sorted(d4countLisTest[0]):
+            tmp_sim=tmp_sim+d4countLisTest[i][key]*d4countLisTest[len(d4countLisTest)-1][key]*w4dicTest[key]*w[count]
+            ti4=ti4+d4countLisTest[i][key]*d4countLisTest[len(d4countLisTest)-1][key]
+            count=count+1
+        for key in sorted(d5countLisTest[0]):
+            tmp_sim=tmp_sim+d5countLisTest[i][key]*d5countLisTest[len(d5countLisTest)-1][key]*w5dicTest[key]*w[count]
+            ti5=ti5+d5countLisTest[i][key]*d5countLisTest[len(d5countLisTest)-1][key]
+            count=count+1
+        for key in sorted(d6countLisTest[0]):
+            tmp_sim=tmp_sim+d6countLisTest[i][key]*d6countLisTest[len(d6countLisTest)-1][key]*w6dicTest[key]*w[count]
+            ti6=ti6+d6countLisTest[i][key]*d6countLisTest[len(d6countLisTest)-1][key]
+            count=count+1
         sim.append(tmp_sim)
     auc=roc_auc_score(testlabel, sim)
     print(auc)

@@ -84,7 +84,18 @@ class Sequence:
   
     
     
-    
+   ## max_min 标准化数据
+    def normdata_max_min(self,dic):
+        ma=-10000000
+        mi=10000000
+        for key in dict.keys(dic):
+            if dic[key]>ma:
+                ma=dic[key]
+            if dic[key]<mi:
+                mi=dic[key]
+        for key in dict.keys(dic):
+            dic[key]=(dic[key]-mi)/(ma-mi)
+        return dic  
     
     
     

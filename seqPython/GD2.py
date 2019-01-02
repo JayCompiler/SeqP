@@ -113,7 +113,7 @@ toolbox = base.Toolbox()
 toolbox.register("attr_bool", random.random)   
 
 
-toolbox.register("individual", tools.initRepeat, creator.Individual,    #tools.initRepeat是干嘛的？？？
+toolbox.register("individual", tools.initRepeat, creator.Individual,    #
     toolbox.attr_bool, 5)
 
 

@@ -61,8 +61,8 @@ class Distance:
         k1=0.0
         k2=0.0
         for key in dict.keys(seqA):
-            k1=k1+seqA[key]*math.log2(seqA[key]/(seqB[key]+np.spacing(1))+np.spacing(1))
-            k2=k2+seqB[key]*math.log2(seqB[key]/(seqA[key]+np.spacing(1))+np.spacing(1))
+            k1=k1+seqA[key]*math.log2(abs(seqA[key]/(seqB[key]+np.spacing(1))+np.spacing(1)))
+            k2=k2+seqB[key]*math.log2(abs(seqB[key]/(seqA[key]+np.spacing(1))+np.spacing(1)))
         return (k1+k2)/2
     
     
@@ -166,7 +166,7 @@ class Distance:
             LA=seqA[key]**2+LA
             LB=seqB[key]**2+LB
         cosine=su/(math.sqrt(LA)*math.sqrt(LB))
-        return abs(1/cosine)
+        return abs(1/cosine+np.spacing(1))
     
     def chebyshev(self,seqA,seqB,k):
         seqLis=[]
