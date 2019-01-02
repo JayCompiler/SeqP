@@ -166,7 +166,7 @@ class Distance:
             LA=seqA[key]**2+LA
             LB=seqB[key]**2+LB
         cosine=su/(math.sqrt(LA)*math.sqrt(LB))
-        return abs(1/cosine+np.spacing(1))
+        return abs(1/(cosine+np.spacing(1)))
     
     def chebyshev(self,seqA,seqB,k):
         seqLis=[]

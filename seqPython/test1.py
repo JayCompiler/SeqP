@@ -62,9 +62,9 @@ size=len(d2freLis)
 freqLis=[None]*size
 for i in range(len(d2freLis)):
     freqLis[i]=dict(sq.normdata(d2freLis[i]),**(sq.normdata(d3freLis[i])))
-    freqLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d4freLis[i])))
-    freqLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d5freLis[i])))
-    freqLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d6freLis[i])))
+    freqLis[i]=dict(freqLis[i],**(sq.normdata(d4freLis[i])))
+    freqLis[i]=dict(freqLis[i],**(sq.normdata(d5freLis[i])))
+    freqLis[i]=dict(freqLis[i],**(sq.normdata(d6freLis[i])))
 
 # 计算权重
 weight=sq.getWeight(freqLis)
@@ -77,6 +77,8 @@ d4countLis,d4arc=sq.getSeqCount(datasets,4,d4dic)
 d5countLis,d5arc=sq.getSeqCount(datasets,5,d5dic)
 d6countLis,d6arc=sq.getSeqCount(datasets,6,d6dic)
 
+
+
 ## 标准化过程： 标准化 count
 for i in range(len(datasets)):
     d2countLis[i]=sq.normdata(d2countLis[i])
@@ -84,6 +86,16 @@ for i in range(len(datasets)):
     d4countLis[i]=sq.normdata(d4countLis[i])
     d5countLis[i]=sq.normdata(d5countLis[i])
     d6countLis[i]=sq.normdata(d6countLis[i])
+    
+    
+## 标准化后合并
+countLis=[None]*size
+for i in range(len(d2freLis)):
+    countLis[i]=dict(d2freLis[i],**(d3freLis[i]))
+    countLis[i]=dict(freqLis[i],**(sq.normdata(d4freLis[i])))
+    countLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d5freLis[i])))
+    countLis[i]=dict(sq.normdata(freqLis[i]),**(sq.normdata(d6freLis[i])))
+
     
 
 ## 构造训练集合和测试集合
