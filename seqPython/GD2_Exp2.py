@@ -4,7 +4,7 @@ Created on Mon Dec 24 09:13:50 2018
 
 
 
-使用z-score 标准化
+使用z-score 标准化  对每一个k对应的kmer 进行加权
 @author: Yzi  
 """
 

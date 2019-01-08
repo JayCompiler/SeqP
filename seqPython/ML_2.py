@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan  2 14:16:53 2019
+Created on Thu Jan  3 13:17:52 2019
 
-最大最小标准化以后 进行d2 距离评估 
+@author: Yzi
 
-@author: YZi
+
+
+使用机器学习方法进行的  序列比对尝试1
 """
-
-
 import random
 
 from deap import base
 from deap import creator
 from deap import tools
-import numpy as np
+#import numpy as np
 import ReadData
 import Sequence
 from sklearn.metrics import roc_auc_score
@@ -21,8 +21,8 @@ import Distance
 
 
 #name="human_muscle"
-#name="fly_blastoderm"
-name="human_HBB"
+name="fly_blastoderm"
+#name="human_HBB"
 
 ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
 #datasets,pos,neg=rd.getData2("fly_blastoderm")
@@ -80,6 +80,35 @@ d4countLis,d4arc=sq.getSeqCount(datasets,4,d4dic)
 d5countLis,d5arc=sq.getSeqCount(datasets,5,d5dic)
 d6countLis,d6arc=sq.getSeqCount(datasets,6,d6dic)
 
+
+
+## 将 字典 离散 二值化
+for i in range(len(d2countLis)):
+    for key in dict.keys(d2countLis[0]):
+        if d2countLis[i][key]>0:
+            d2countLis[i][key]=1
+for i in range(len(d3countLis)):
+    for key in dict.keys(d3countLis[0]):
+        if d3countLis[i][key]>0:
+            d3countLis[i][key]=1
+for i in range(len(d4countLis)):
+    for key in dict.keys(d4countLis[0]):
+        if d4countLis[i][key]>0:
+            d4countLis[i][key]=1
+for i in range(len(d5countLis)):
+    for key in dict.keys(d5countLis[0]):
+        if d5countLis[i][key]>0:
+            d5countLis[i][key]=1
+for i in range(len(d6countLis)):
+    for key in dict.keys(d6countLis[0]):
+        if d6countLis[i][key]>0:
+            d6countLis[i][key]=1
+
+
+
+
+
+
 ## 标准化过程： 标准化 count
 for i in range(len(datasets)):
     d2countLis[i]=sq.normdata_max_min(d2countLis[i])
@@ -88,6 +117,15 @@ for i in range(len(datasets)):
     d5countLis[i]=sq.normdata_max_min(d5countLis[i])
     d6countLis[i]=sq.normdata_max_min(d6countLis[i])
     
+## 标准化后合并
+countLis=[None]*size
+for i in range(len(d2freLis)):
+    countLis[i]=dict(d2countLis[i],**(d3countLis[i]))
+    countLis[i]=dict(countLis[i],**(d4countLis[i]))
+    countLis[i]=dict(countLis[i],**(d5countLis[i]))
+    countLis[i]=dict(countLis[i],**(d6countLis[i]))
+
+weightSize=len(countLis[0])    
 
 ## 构造训练集合和测试集合
 # 构造对集合
@@ -142,9 +180,9 @@ toolbox = base.Toolbox()
 
 toolbox.register("attr_bool", random.random)   
 
-
-toolbox.register("individual", tools.initRepeat, creator.Individual,    #tools.initRepeat是干嘛的？？？
-    toolbox.attr_bool, 5)
+## 设置权重个数
+toolbox.register("individual", tools.initRepeat, creator.Individual,    #tools.initRepeat是干
+    toolbox.attr_bool, weightSize)
 
 
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
@@ -164,17 +202,11 @@ def evalOneMax(individual):
   
     for i in range(len(trainLis)):
         tmp_sim=0
-        for key in dict.keys(d2countLis[0]):
-            tmp_sim=tmp_sim+d2countLis[trainLis[i][0]][key]*d2countLis[trainLis[i][1]][key]*weightMax[key]*weight[0]
-        for key in dict.keys(d3countLis[0]):
-            tmp_sim=tmp_sim+d3countLis[trainLis[i][0]][key]*d3countLis[trainLis[i][1]][key]*weightMax[key]*weight[1]
-        for key in dict.keys(d4countLis[0]):
-            tmp_sim=tmp_sim+d4countLis[trainLis[i][0]][key]*d4countLis[trainLis[i][1]][key]*weightMax[key]*weight[2]    
-        for key in dict.keys(d5countLis[0]):
-            tmp_sim=tmp_sim+d5countLis[trainLis[i][0]][key]*d5countLis[trainLis[i][1]][key]*weightMax[key]*weight[3]
-        for key in dict.keys(d6countLis[0]):
-            tmp_sim=tmp_sim+d6countLis[trainLis[i][0]][key]*d6countLis[trainLis[i][1]][key]*weightMax[key]*weight[4] 
-        sim.append(tmp_sim)               
+        count=0
+        for key in sorted(countLis[0]):
+             tmp_sim=tmp_sim+countLis[trainLis[i][0]][key]*countLis[trainLis[i][1]][key]*weight[count]
+             count=count+1
+        sim.append(tmp_sim) 
     auc=roc_auc_score(trainlabel, sim)
     return auc,
 
@@ -223,7 +255,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.6, 25
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 50
     
     print("Start of evolution")
     
@@ -306,9 +338,7 @@ if __name__ == "__main__":
     print("GA---------------------------")
     ## 归一化处理
     w=main()
-#    su=sum(w)
-#    for i in range(len(w)):
-#        w[i]=w[i]/su
+
     print(w)
     print(len(w))
     sim=[]
@@ -324,37 +354,12 @@ if __name__ == "__main__":
     ## 计算权重
   
     for i in range(len(testLis)):
-        ti2=0
-        ti3=0
-        ti4=0
-        ti5=0
-        ti6=0
         tmp_sim=0
-        for key in dict.keys(d2countLis[0]):
-            tmp_sim=tmp_sim+d2countLis[testLis[i][0]][key]*d2countLis[testLis[i][1]][key]*weightMax[key]*w[0]
-            ti2=ti2+d2countLis[testLis[i][0]][key]*d2countLis[testLis[i][1]][key]
-            
-        for key in dict.keys(d3countLis[0]):
-            tmp_sim=tmp_sim+d3countLis[testLis[i][0]][key]*d3countLis[testLis[i][1]][key]*weightMax[key]*w[1]
-            ti3=ti3+d3countLis[testLis[i][0]][key]*d3countLis[testLis[i][1]][key]
-
-        for key in dict.keys(d4countLis[0]):
-            tmp_sim=tmp_sim+d4countLis[testLis[i][0]][key]*d4countLis[testLis[i][1]][key]*weightMax[key]*w[2] 
-            ti4=ti4+d4countLis[testLis[i][0]][key]*d4countLis[testLis[i][1]][key]
-            
-        for key in dict.keys(d5countLis[0]):
-            tmp_sim=tmp_sim+d5countLis[testLis[i][0]][key]*d5countLis[testLis[i][1]][key]*weightMax[key]*w[3]
-            ti5=ti5+d5countLis[testLis[i][0]][key]*d5countLis[testLis[i][1]][key]
-            
-        for key in dict.keys(d6countLis[0]):
-            tmp_sim=tmp_sim+d6countLis[testLis[i][0]][key]*d6countLis[testLis[i][1]][key]*weightMax[key]*w[4]
-            ti6=ti6+d6countLis[testLis[i][0]][key]*d6countLis[testLis[i][1]][key]
-        sim.append(tmp_sim) 
-        inner2.append([ti2,ti2/len(d2countLis[0])])
-        inner3.append([ti3,ti3/len(d3countLis[0])])
-        inner4.append([ti4,ti4/len(d4countLis[0])])
-        inner5.append([ti5,ti5/len(d5countLis[0])])
-        inner6.append([ti6,ti6/len(d6countLis[0])])              
+        count=0
+        for key in sorted(countLis[0]):
+            tmp_sim=tmp_sim+countLis[testLis[i][0]][key]*countLis[testLis[i][1]][key]*w[count]
+            count=count+1
+        sim.append(tmp_sim)               
     auc=roc_auc_score(testlabel, sim)
     
     
@@ -425,5 +430,4 @@ if __name__ == "__main__":
             sim.append(tmp)
         auc=roc_auc_score(testlabel, sim)  
         print(auc)
-        
-     
+

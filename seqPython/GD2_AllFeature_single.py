@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan  2 14:16:53 2019
+Created on Thu Jan  3 09:54:30 2019
 
-最大最小标准化以后 进行d2 距离评估 
+单个k的对每个特征加权重
 
-@author: YZi
+@author: Yzi
 """
 
 
@@ -13,7 +13,7 @@ import random
 from deap import base
 from deap import creator
 from deap import tools
-import numpy as np
+#import numpy as np
 import ReadData
 import Sequence
 from sklearn.metrics import roc_auc_score
@@ -23,11 +23,11 @@ import Distance
 #name="human_muscle"
 #name="fly_blastoderm"
 name="human_HBB"
-
+k=2
 ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
 #datasets,pos,neg=rd.getData2("fly_blastoderm")
   ## 获取数据 kmer 从2-->6
-print("---------",name,"------------")
+print("---------",name,"------------","k=",k)
 rd=ReadData.ReadData()
 
 datasets,pos,neg=rd.getData2(name)
@@ -81,13 +81,26 @@ d5countLis,d5arc=sq.getSeqCount(datasets,5,d5dic)
 d6countLis,d6arc=sq.getSeqCount(datasets,6,d6dic)
 
 ## 标准化过程： 标准化 count
-for i in range(len(datasets)):
-    d2countLis[i]=sq.normdata_max_min(d2countLis[i])
-    d3countLis[i]=sq.normdata_max_min(d3countLis[i])
-    d4countLis[i]=sq.normdata_max_min(d4countLis[i])
-    d5countLis[i]=sq.normdata_max_min(d5countLis[i])
-    d6countLis[i]=sq.normdata_max_min(d6countLis[i])
-    
+#for i in range(len(datasets)):
+#    d2countLis[i]=sq.normdata_max_min(d2countLis[i])
+#    d3countLis[i]=sq.normdata_max_min(d3countLis[i])
+#    d4countLis[i]=sq.normdata_max_min(d4countLis[i])
+#    d5countLis[i]=sq.normdata_max_min(d5countLis[i])
+#    d6countLis[i]=sq.normdata_max_min(d6countLis[i])
+#    
+### 标准化后合并
+#countLis=[None]*size
+#for i in range(len(d2freLis)):
+#    countLis[i]=dict(d2countLis[i],**(d3countLis[i]))
+#    countLis[i]=dict(countLis[i],**(d4countLis[i]))
+#    countLis[i]=dict(countLis[i],**(d5countLis[i]))
+#    countLis[i]=dict(countLis[i],**(d6countLis[i]))
+
+
+Fea="d"+str(k)+"countLis"
+
+## 特征个数
+weightSize=len(eval(Fea)[0])    
 
 ## 构造训练集合和测试集合
 # 构造对集合
@@ -142,9 +155,9 @@ toolbox = base.Toolbox()
 
 toolbox.register("attr_bool", random.random)   
 
-
-toolbox.register("individual", tools.initRepeat, creator.Individual,    #tools.initRepeat是干嘛的？？？
-    toolbox.attr_bool, 5)
+## 设置权重个数
+toolbox.register("individual", tools.initRepeat, creator.Individual,    #tools.initRepeat是干
+    toolbox.attr_bool, weightSize)
 
 
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
@@ -161,20 +174,14 @@ def evalOneMax(individual):
 #        weight[i]=(weight[i]+np.spacing(1))/su+np.spacing(1)
     sim=[]
     ## 计算权重
-  
+    feature=eval(Fea)
     for i in range(len(trainLis)):
         tmp_sim=0
-        for key in dict.keys(d2countLis[0]):
-            tmp_sim=tmp_sim+d2countLis[trainLis[i][0]][key]*d2countLis[trainLis[i][1]][key]*weightMax[key]*weight[0]
-        for key in dict.keys(d3countLis[0]):
-            tmp_sim=tmp_sim+d3countLis[trainLis[i][0]][key]*d3countLis[trainLis[i][1]][key]*weightMax[key]*weight[1]
-        for key in dict.keys(d4countLis[0]):
-            tmp_sim=tmp_sim+d4countLis[trainLis[i][0]][key]*d4countLis[trainLis[i][1]][key]*weightMax[key]*weight[2]    
-        for key in dict.keys(d5countLis[0]):
-            tmp_sim=tmp_sim+d5countLis[trainLis[i][0]][key]*d5countLis[trainLis[i][1]][key]*weightMax[key]*weight[3]
-        for key in dict.keys(d6countLis[0]):
-            tmp_sim=tmp_sim+d6countLis[trainLis[i][0]][key]*d6countLis[trainLis[i][1]][key]*weightMax[key]*weight[4] 
-        sim.append(tmp_sim)               
+        count=0
+        for key in sorted(feature[0]):
+             tmp_sim=tmp_sim+feature[trainLis[i][0]][key]*feature[trainLis[i][1]][key]*weight[count]
+             count=count+1
+        sim.append(tmp_sim) 
     auc=roc_auc_score(trainlabel, sim)
     return auc,
 
@@ -208,7 +215,7 @@ def main():
     # 通常是把时间秒数等变化值作为种子值，达到每次运行产生的随机系列都不一样
     # create an initial population of 300 individuals (where
     # each individual is a list of integers)
-    pop = toolbox.population(n=100)    #定义了300个个体的种群！！！
+    pop = toolbox.population(n=50)    #定义了300个个体的种群！！！
     
 #    print(pop[0][0])
     for i in range(len(pop)):
@@ -223,7 +230,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.6, 25
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 25
     
     print("Start of evolution")
     
@@ -301,7 +308,7 @@ def main():
 
 if __name__ == "__main__":
     
-    print(len(freqLis[0]))
+    print(len(eval(Fea)[0]))
     dis =Distance.Distance()
     print("GA---------------------------")
     ## 归一化处理
@@ -309,8 +316,21 @@ if __name__ == "__main__":
 #    su=sum(w)
 #    for i in range(len(w)):
 #        w[i]=w[i]/su
-    print(w)
+#    print(w)
     print(len(w))
+    
+    count=0
+
+    nam=str(k)+"-weight-"+name+"single"
+    file= open(nam, 'w')
+    feature="d"+str(k)+"freLis"
+    for i in range(len(eval(feature)[0])):
+        file.write(str(w[count]))
+        count=count+1
+        file.write('\n')
+    file.close()
+    
+    
     sim=[]
     ## 计算权重  结合遗传算法
     sim=[]
@@ -322,39 +342,15 @@ if __name__ == "__main__":
     
     sim=[]
     ## 计算权重
-  
+    feature=eval(Fea)
     for i in range(len(testLis)):
-        ti2=0
-        ti3=0
-        ti4=0
-        ti5=0
-        ti6=0
         tmp_sim=0
-        for key in dict.keys(d2countLis[0]):
-            tmp_sim=tmp_sim+d2countLis[testLis[i][0]][key]*d2countLis[testLis[i][1]][key]*weightMax[key]*w[0]
-            ti2=ti2+d2countLis[testLis[i][0]][key]*d2countLis[testLis[i][1]][key]
-            
-        for key in dict.keys(d3countLis[0]):
-            tmp_sim=tmp_sim+d3countLis[testLis[i][0]][key]*d3countLis[testLis[i][1]][key]*weightMax[key]*w[1]
-            ti3=ti3+d3countLis[testLis[i][0]][key]*d3countLis[testLis[i][1]][key]
-
-        for key in dict.keys(d4countLis[0]):
-            tmp_sim=tmp_sim+d4countLis[testLis[i][0]][key]*d4countLis[testLis[i][1]][key]*weightMax[key]*w[2] 
-            ti4=ti4+d4countLis[testLis[i][0]][key]*d4countLis[testLis[i][1]][key]
-            
-        for key in dict.keys(d5countLis[0]):
-            tmp_sim=tmp_sim+d5countLis[testLis[i][0]][key]*d5countLis[testLis[i][1]][key]*weightMax[key]*w[3]
-            ti5=ti5+d5countLis[testLis[i][0]][key]*d5countLis[testLis[i][1]][key]
-            
-        for key in dict.keys(d6countLis[0]):
-            tmp_sim=tmp_sim+d6countLis[testLis[i][0]][key]*d6countLis[testLis[i][1]][key]*weightMax[key]*w[4]
-            ti6=ti6+d6countLis[testLis[i][0]][key]*d6countLis[testLis[i][1]][key]
-        sim.append(tmp_sim) 
-        inner2.append([ti2,ti2/len(d2countLis[0])])
-        inner3.append([ti3,ti3/len(d3countLis[0])])
-        inner4.append([ti4,ti4/len(d4countLis[0])])
-        inner5.append([ti5,ti5/len(d5countLis[0])])
-        inner6.append([ti6,ti6/len(d6countLis[0])])              
+        count=0
+        
+        for key in sorted(feature[0]):
+            tmp_sim=tmp_sim+feature[testLis[i][0]][key]*feature[testLis[i][1]][key]*w[count]
+            count=count+1
+        sim.append(tmp_sim)               
     auc=roc_auc_score(testlabel, sim)
     
     

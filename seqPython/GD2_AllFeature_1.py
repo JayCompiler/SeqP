@@ -2,6 +2,8 @@
 """
 Created on Wed Jan  2 14:16:53 2019
 
+第一个实验对每个特征加权重
+
 @author: YZi
 """
 
@@ -16,11 +18,13 @@ import ReadData
 import Sequence
 from sklearn.metrics import roc_auc_score
 import Distance
+import time
 
 
 #name="human_muscle"
 #name="fly_blastoderm"
 name="human_HBB"
+#name="fly_tracheal_system"
 
 ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
 #datasets,pos,neg=rd.getData2("fly_blastoderm")
@@ -209,7 +213,7 @@ def main():
     # 通常是把时间秒数等变化值作为种子值，达到每次运行产生的随机系列都不一样
     # create an initial population of 300 individuals (where
     # each individual is a list of integers)
-    pop = toolbox.population(n=100)    #定义了300个个体的种群！！！
+    pop = toolbox.population(n=50)    #定义了300个个体的种群！！！
     
 #    print(pop[0][0])
     for i in range(len(pop)):
@@ -224,7 +228,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.3, 50
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 25
     
     print("Start of evolution")
     
@@ -306,11 +310,27 @@ if __name__ == "__main__":
     dis =Distance.Distance()
     print("GA---------------------------")
     ## 归一化处理
+    start= time.process_time()
     w=main()
-#    su=sum(w)
-#    for i in range(len(w)):
-#        w[i]=w[i]/su
-    print(w)
+    end= time.process_time()
+    print("求权重时间消耗：",(end-start))
+    count=0
+#    c1=len(d2countLis[0])
+#    c2=len(d3countLis[0])
+#    c3=len(d4countLis[0])
+#    c4=len(d5countLis[0])
+#    c5=len(d6countLis[0])
+    for k in range(2,7):
+        nam=str(k)+"-weight-"+name
+        file= open(nam, 'w')
+        feature="d"+str(k)+"freLis"
+        for i in range(len(eval(feature)[0])):
+            file.write(str(w[count]))
+            count=count+1
+            file.write('\n')
+        file.close()
+    ## 保存完毕
+    print("----------------------保存完毕-------------")
     print(len(w))
     sim=[]
     ## 计算权重  结合遗传算法
@@ -328,7 +348,7 @@ if __name__ == "__main__":
         tmp_sim=0
         count=0
         for key in sorted(countLis[0]):
-            tmp_sim=tmp_sim+countLis[testLis[i][0]][key]*countLis[testLis[i][1]][key]*weightMax[key]*w[count]
+            tmp_sim=tmp_sim+countLis[testLis[i][0]][key]*countLis[testLis[i][1]][key]*w[count]
             count=count+1
         sim.append(tmp_sim)               
     auc=roc_auc_score(testlabel, sim)
