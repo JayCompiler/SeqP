@@ -228,6 +228,15 @@ class Sequence:
     
     
     
+    ## 统计所有序列的D2scount 
+    def getD2SMul_SeqCount(self,sequences,k,r,flag,kmersetdic,kmer_pro):
+        Lisdic=[]
+        for sequence in sequences:
+            tmpdic=self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
+            Lisdic.append(tmpdic)
+        return Lisdic
+    
+    
     
     
       ## 统计D2S kmersetdic 表示所有序列所有的kmer集合 O(m*n*k) 先标准化count
@@ -278,6 +287,14 @@ class Sequence:
             else:
                 prodic[key]=(lis[0][key]-n*kmer_pro[key])/math.sqrt(n*(kmer_pro[key]+np.spacing(1)))
         return self.addfloat(prodic)
+    ## 统计所有序列的 d2star 
+    def getD2Star_Mul_seq_Count(self,sequences,k,r,flag,kmersetdic,kmer_pro):
+        dicLis=[]
+        for sequence in sequences:
+            tmpdic=self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
+            dicLis.append(tmpdic)
+        return dicLis
+            
     
     
      ## 统计D2Star kmersetdic 表示所有序列所有的kmer集合 O(m*n*k)

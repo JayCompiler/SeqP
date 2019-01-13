@@ -23,7 +23,7 @@ import Distance
 #name="human_muscle"
 #name="fly_blastoderm"
 name="human_HBB"
-k=2
+k=6
 ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
 #datasets,pos,neg=rd.getData2("fly_blastoderm")
   ## 获取数据 kmer 从2-->6
@@ -230,7 +230,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.3, 25
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 100
     
     print("Start of evolution")
     

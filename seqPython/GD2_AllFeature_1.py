@@ -228,7 +228,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.3, 25
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 100
     
     print("Start of evolution")
     

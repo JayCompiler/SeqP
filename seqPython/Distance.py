@@ -263,8 +263,8 @@ class Distance:
         su=0.0
         for key in dict.keys(lisFeaA):
             su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lisFeaA[key]**2+lisFeaB[key]**2)
-        return 1/(su+np.spacing(1))
-    
+            return 1/(su+np.spacing(1))
+
     
     def getD2S_feature(self,seqA,seqB):
         #计算D2S
@@ -305,6 +305,14 @@ class Distance:
         lenB=len(seqB)
         for key in dict.keys(lisFeaA):
             su=su+(lisFeaA[key]*lisFeaB[key])/math.sqrt(lenA*kmer_pro[key]*lenB*kmer_pro[key])
+        return 1/(su+np.spacing(1))
+    
+    
+    def getD2Star_feature(self,seqA,seqB):
+        #计算D2S
+        su=0.0
+        for key in dict.keys(seqA):
+            su=su+(seqA[key]*seqB[key])
         return 1/(su+np.spacing(1))
     
     ## 带有权重的D2
@@ -397,6 +405,13 @@ class Distance:
         for key in dict.keys(feaA):
             su=su+feaA[key]*feaB[key]*weight[key]## 改一下
         return 1/(su+np.spacing(1))
+    
+    def getMulD2Weight3Lis(self,feaA,feaB,weight):
+        su=0.0
+        for i in range(len(feaA)):
+            su=su+feaA[i]*feaB[i]*weight[i]## 改一下
+        return 1/(su+np.spacing(1))
+    
     
     
     ## 多个k值的带权重的D2s 时间复杂度高，空间复杂度低
