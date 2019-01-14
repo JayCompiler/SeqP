@@ -287,11 +287,12 @@ class Sequence:
             else:
                 prodic[key]=(lis[0][key]-n*kmer_pro[key])/math.sqrt(n*(kmer_pro[key]+np.spacing(1)))
         return self.addfloat(prodic)
+    
     ## 统计所有序列的 d2star 
     def getD2Star_Mul_seq_Count(self,sequences,k,r,flag,kmersetdic,kmer_pro):
         dicLis=[]
         for sequence in sequences:
-            tmpdic=self.getD2SCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
+            tmpdic=self.getD2StarCount(sequence,sequences,k,r,flag,kmersetdic,kmer_pro)
             dicLis.append(tmpdic)
         return dicLis
             

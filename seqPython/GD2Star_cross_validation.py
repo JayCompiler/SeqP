@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jan 11 14:25:38 2019
-
+Created on Sun Jan 13 21:44:59 2019
+D2star 遗传算法
 @author: Yzi
 """
+
+
+
 
 import random
 from deap import base
@@ -15,7 +18,7 @@ import Sequence
 from sklearn.metrics import roc_auc_score
 import Distance
 import time
-
+import markov
 
 ## 将lis划分为num块
 def chunkIt(Lis, num):
@@ -41,16 +44,16 @@ def evalOneMax(individual):
   
     for i in range(len(trainLis)):
         tmp_sim=0
-        for key in dict.keys(d2countLis[0]):
-            tmp_sim=tmp_sim+d2countLis[trainLis[i][0]][key]*d2countLis[trainLis[i][1]][key]*weight2M[key]*weight[0]
-        for key in dict.keys(d3countLis[0]):
-            tmp_sim=tmp_sim+d3countLis[trainLis[i][0]][key]*d3countLis[trainLis[i][1]][key]*weight3M[key]*weight[1]
-        for key in dict.keys(d4countLis[0]):
-            tmp_sim=tmp_sim+d4countLis[trainLis[i][0]][key]*d4countLis[trainLis[i][1]][key]*weight4M[key]*weight[2]    
-        for key in dict.keys(d5countLis[0]):
-            tmp_sim=tmp_sim+d5countLis[trainLis[i][0]][key]*d5countLis[trainLis[i][1]][key]*weight5M[key]*weight[3]
-        for key in dict.keys(d6countLis[0]):
-            tmp_sim=tmp_sim+d6countLis[trainLis[i][0]][key]*d6countLis[trainLis[i][1]][key]*weight6M[key]*weight[4] 
+        for key in dict.keys(d2scountLis[0]):
+            tmp_sim=tmp_sim+d2scountLis[trainLis[i][0]][key]*d2scountLis[trainLis[i][1]][key]*weight2M[key]*weight[0]
+        for key in dict.keys(d3scountLis[0]):
+            tmp_sim=tmp_sim+d3scountLis[trainLis[i][0]][key]*d3scountLis[trainLis[i][1]][key]*weight3M[key]*weight[1]
+        for key in dict.keys(d4scountLis[0]):
+            tmp_sim=tmp_sim+d4scountLis[trainLis[i][0]][key]*d4scountLis[trainLis[i][1]][key]*weight4M[key]*weight[2]   
+        for key in dict.keys(d5scountLis[0]):
+            tmp_sim=tmp_sim+d5scountLis[trainLis[i][0]][key]*d5scountLis[trainLis[i][1]][key]*weight5M[key]*weight[3]
+        for key in dict.keys(d6scountLis[0]):
+            tmp_sim=tmp_sim+d6scountLis[trainLis[i][0]][key]*d6scountLis[trainLis[i][1]][key]*weight6M[key]*weight[4] 
         sim.append(tmp_sim)               
     auc=roc_auc_score(trainlabel, sim)
     return auc,
@@ -121,7 +124,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.3, 25
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 20
     
     print("Start of evolution")
     
@@ -199,8 +202,8 @@ def main():
 
 if __name__ == "__main__":   
     ###--------------------------数据的预处理--------------------------1-----------------
-#    name="human_muscle"
-    name="fly_blastoderm"
+    name="human_muscle"
+    #name="fly_blastoderm"
 #    name="human_HBB"
     
     ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
@@ -244,14 +247,24 @@ if __name__ == "__main__":
     
     size=len(d2freLis)
     
+   ## 获取kmer 概率集合
+    mar=markov.Markov()
+    ## 获得概率
+    kmer_pro2=mar.get_Mulk_Mul_kmer_Pro(datasets,2,2,0)
+    kmer_pro3=mar.get_Mulk_Mul_kmer_Pro(datasets,3,3,0)
+    kmer_pro4=mar.get_Mulk_Mul_kmer_Pro(datasets,4,4,0)
+    kmer_pro5=mar.get_Mulk_Mul_kmer_Pro(datasets,5,5,0)
+    kmer_pro6=mar.get_Mulk_Mul_kmer_Pro(datasets,6,6,0)
+
+    ####### d2star特征--------------------
+    d2scountLis=sq.getD2Star_Mul_seq_Count(datasets,2,0,True,d2dic,kmer_pro2)
+    d3scountLis=sq.getD2Star_Mul_seq_Count(datasets,3,0,True,d3dic,kmer_pro3)
+    d4scountLis=sq.getD2Star_Mul_seq_Count(datasets,4,0,True,d4dic,kmer_pro4)
+    d5scountLis=sq.getD2Star_Mul_seq_Count(datasets,5,0,True,d5dic,kmer_pro5)    
+    d6scountLis=sq.getD2Star_Mul_seq_Count(datasets,6,0,True,d6dic,kmer_pro6)
     
-    
-        ## d2 特征 count 所有数据集
-    d2countLis,d2arc=sq.getSeqCount(datasets,2,d2dic)
-    d3countLis,d3arc=sq.getSeqCount(datasets,3,d3dic)
-    d4countLis,d4arc=sq.getSeqCount(datasets,4,d4dic)
-    d5countLis,d5arc=sq.getSeqCount(datasets,5,d5dic)
-    d6countLis,d6arc=sq.getSeqCount(datasets,6,d6dic)
+
+
     
     # 构造对集合
     pairPoslist=[]
@@ -271,7 +284,7 @@ if __name__ == "__main__":
     
     
     ###构造数据集，交叉验证,n折划分---------------------------------------2-----------------------------
-    num=2
+    num=5
     posChunk=chunkIt(pairPoslist,num)
     negChunk=chunkIt(pairNeglist,num)
     start=time.process_time()
@@ -316,28 +329,28 @@ if __name__ == "__main__":
       
         for i in range(len(testLis)):
             tmp_sim=0
-            for key in dict.keys(d2countLis[0]):
-                tmp_sim=tmp_sim+d2countLis[testLis[i][0]][key]*d2countLis[testLis[i][1]][key]*weight2M[key]*w[0]
-            for key in dict.keys(d3countLis[0]):
-                tmp_sim=tmp_sim+d3countLis[testLis[i][0]][key]*d3countLis[testLis[i][1]][key]*weight3M[key]*w[1]    
-            for key in dict.keys(d4countLis[0]):
-                tmp_sim=tmp_sim+d4countLis[testLis[i][0]][key]*d4countLis[testLis[i][1]][key]*weight4M[key]*w[2]                 
-            for key in dict.keys(d5countLis[0]):
-                tmp_sim=tmp_sim+d5countLis[testLis[i][0]][key]*d5countLis[testLis[i][1]][key]*weight5M[key]*w[3]                
-            for key in dict.keys(d6countLis[0]):
-                tmp_sim=tmp_sim+d6countLis[testLis[i][0]][key]*d6countLis[testLis[i][1]][key]*weight6M[key]*w[4]
+            for key in dict.keys(d2scountLis[0]):
+                tmp_sim=tmp_sim+d2scountLis[testLis[i][0]][key]*d2scountLis[testLis[i][1]][key]*weight2M[key]*w[0]
+            for key in dict.keys(d3scountLis[0]):
+                tmp_sim=tmp_sim+d3scountLis[testLis[i][0]][key]*d3scountLis[testLis[i][1]][key]*weight3M[key]*w[1]
+            for key in dict.keys(d4scountLis[0]):
+                tmp_sim=tmp_sim+d4scountLis[testLis[i][0]][key]*d4scountLis[testLis[i][1]][key]*weight4M[key]*w[2]
+            for key in dict.keys(d5scountLis[0]):
+                tmp_sim=tmp_sim+d5scountLis[testLis[i][0]][key]*d5scountLis[testLis[i][1]][key]*weight5M[key]*w[3]
+            for key in dict.keys(d6scountLis[0]):
+                tmp_sim=tmp_sim+d6scountLis[testLis[i][0]][key]*d6scountLis[testLis[i][1]][key]*weight6M[key]*w[4]
             sim.append(tmp_sim)     
         auc=roc_auc_score(testlabel, sim)    
         aucLis.append(auc)
-        print("GA_D2第",o,"次auc的值",auc)
+        print("GA_D2star第",o,"次auc的值",auc)
     su=0
     for i in range(len(aucLis)):
         su=su+aucLis[i]
     avgAuc=su/num
-    print("GA_D2平均auc",avgAuc)
+    print("GA_D2star平均auc",avgAuc)
     end=time.process_time()
     print("程序时间：",(end-start))
-    print("特征个数",len(d2countLis[0])+len(d3countLis[0])+len(d4countLis[0])+len(d5countLis[0])+len(d6countLis[0]))
+    print("特征个数",len(d2scountLis[0])+len(d3scountLis[0])+len(d4scountLis[0])+len(d5scountLis[0])+len(d6scountLis[0]))
     
     
     
