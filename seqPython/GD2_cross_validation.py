@@ -121,7 +121,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.3, 25
+    CXPB, MUTPB, NGEN = 0.6, 0.6, 25
     
     print("Start of evolution")
     
@@ -181,7 +181,9 @@ def main():
         print("  Max %s" % max(fits))
         print("  Avg %s" % mean)
         print("  Std %s" % std)
-    
+        if std<=10E-8:
+            break
+        
     print("-- End of (successful) evolution ---")
     
     best_ind = tools.selBest(pop, 1)[0]
@@ -206,7 +208,7 @@ if __name__ == "__main__":
     ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
     #datasets,pos,neg=rd.getData2("fly_blastoderm")
       ## 获取数据 kmer 从2-->6
-    print("---------",name,"------------")
+    print("------GA_D2---",name,"------------")
     rd=ReadData.ReadData()
     
     datasets,pos,neg=rd.getData2(name)
@@ -271,7 +273,7 @@ if __name__ == "__main__":
     
     
     ###构造数据集，交叉验证,n折划分---------------------------------------2-----------------------------
-    num=2
+    num=3
     posChunk=chunkIt(pairPoslist,num)
     negChunk=chunkIt(pairNeglist,num)
     start=time.process_time()
@@ -306,7 +308,7 @@ if __name__ == "__main__":
         ##---------------------------------------------------------3 遗传开始-------------------------
         dis =Distance.Distance()
        
-        print("GA---------------第",o,"次验证---------------" )
+        print("GA--------------第",o,"次验证---------------" )
         ## 归一化处理
         w=main()
     
