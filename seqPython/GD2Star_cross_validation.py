@@ -124,7 +124,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.6, 20
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 50
     
     print("Start of evolution")
     
@@ -204,8 +204,8 @@ def main():
 
 if __name__ == "__main__":   
     ###--------------------------数据的预处理--------------------------1-----------------
-#    name="human_muscle"
-    name="fly_blastoderm"
+    name="human_muscle"
+#    name="fly_blastoderm"
 #    name="human_HBB"
     
     ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
@@ -265,7 +265,12 @@ if __name__ == "__main__":
     d5scountLis=sq.getD2Star_Mul_seq_Count(datasets,5,0,True,d5dic,kmer_pro5)    
     d6scountLis=sq.getD2Star_Mul_seq_Count(datasets,6,0,True,d6dic,kmer_pro6)
     
-
+    for i in range(len(datasets)):
+        d2scountLis[i]=sq.normdata_max_min(d2scountLis[i])
+        d3scountLis[i]=sq.normdata_max_min(d3scountLis[i])
+        d4scountLis[i]=sq.normdata_max_min(d4scountLis[i])
+        d5scountLis[i]=sq.normdata_max_min(d5scountLis[i])
+        d6scountLis[i]=sq.normdata_max_min(d6scountLis[i])  
 
     
     # 构造对集合
@@ -286,7 +291,7 @@ if __name__ == "__main__":
     
     
     ###构造数据集，交叉验证,n折划分---------------------------------------2-----------------------------
-    num=3
+    num=5
     posChunk=chunkIt(pairPoslist,num)
     negChunk=chunkIt(pairNeglist,num)
     start=time.process_time()

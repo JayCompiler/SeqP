@@ -106,7 +106,7 @@ def main():
     # 通常是把时间秒数等变化值作为种子值，达到每次运行产生的随机系列都不一样
     # create an initial population of 300 individuals (where
     # each individual is a list of integers)
-    pop = toolbox.population(n=50)    #定义了300个个体的种群！！！
+    pop = toolbox.population(n=100)    #定义了300个个体的种群！！！
     
 #    print(pop[0][0])
     for i in range(len(pop)):
@@ -121,7 +121,7 @@ def main():
     #
     # NGEN  is the number of generations for which the
     #       evolution runs   进化运行的代数！
-    CXPB, MUTPB, NGEN = 0.6, 0.6, 25
+    CXPB, MUTPB, NGEN = 0.6, 0.3, 20
     
     print("Start of evolution")
     
@@ -202,8 +202,11 @@ def main():
 if __name__ == "__main__":   
     ###--------------------------数据的预处理--------------------------1-----------------
 #    name="human_muscle"
-    name="fly_blastoderm"
+    
+#    name="fly_blastoderm"
+    
 #    name="human_HBB"
+    name="pns"
     
     ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
     #datasets,pos,neg=rd.getData2("fly_blastoderm")
@@ -254,6 +257,13 @@ if __name__ == "__main__":
     d4countLis,d4arc=sq.getSeqCount(datasets,4,d4dic)
     d5countLis,d5arc=sq.getSeqCount(datasets,5,d5dic)
     d6countLis,d6arc=sq.getSeqCount(datasets,6,d6dic)
+    ## 标准化过程： 标准化 count
+    for i in range(len(datasets)):
+        d2countLis[i]=sq.normdata_max_min(d2countLis[i])
+        d3countLis[i]=sq.normdata_max_min(d3countLis[i])
+        d4countLis[i]=sq.normdata_max_min(d4countLis[i])
+        d5countLis[i]=sq.normdata_max_min(d5countLis[i])
+        d6countLis[i]=sq.normdata_max_min(d6countLis[i])
     
     # 构造对集合
     pairPoslist=[]
@@ -273,7 +283,7 @@ if __name__ == "__main__":
     
     
     ###构造数据集，交叉验证,n折划分---------------------------------------2-----------------------------
-    num=3
+    num=5
     posChunk=chunkIt(pairPoslist,num)
     negChunk=chunkIt(pairNeglist,num)
     start=time.process_time()

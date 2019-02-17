@@ -5,11 +5,6 @@ Created on Fri Jan 11 15:19:58 2019
 @author:Yzi
 """
 
-#import random
-
-from deap import base
-from deap import creator
-from deap import tools
 #import numpy as np
 import ReadData
 import Sequence
@@ -18,9 +13,10 @@ import Distance
 import markov
 
 
-name="human_muscle"
+#name="human_muscle"
 #name="fly_blastoderm"
 #name="human_HBB"
+name="pns"
 #k=6
 ## 获取数据集 整个数据集，正数据集，负数据集 都是序列，没有标签
 #datasets,pos,neg=rd.getData2("fly_blastoderm")
@@ -185,7 +181,9 @@ if __name__ == "__main__":
             d2starcountLis=sq.getD2Star_Mul_seq_Count(datasets,k,r,True,eval(dicp),kmer_pro)
             
             print("----------------D2s-----------------")
+            
             print("k=",k)
+            
             feature="d"+str(2)+"scountLis"
             
             

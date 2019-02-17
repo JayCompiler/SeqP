@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jan 11 16:53:18 2019
+Created on Tue Jan 15 19:05:58 2019
 
 @author: 51164
 """
@@ -22,8 +22,8 @@ def getSim(Lis):
 if __name__=="__main__":
     rd=ReadData.ReadData()
 #    datasets,pos,neg=rd.getData2("fly_blastoderm")
-    name="human_muscle"
-#    name="pns"
+#    name="human_muscle"
+    name="pns"
     datasets,pos,neg=rd.getData2(name)
     print(name)
 
@@ -49,8 +49,8 @@ if __name__=="__main__":
     print("kstart=",kstart," kend=",kend)
     start = time.process_time()
     ## 计算MulD2特征
-    posD2DicLis=sq.getMulCount(pos,kstart,kend,pos) 
-    negD2DicLis=sq.getMulCount(neg,kstart,kend,neg)
+    posD2DicLis=sq.getMulCount_nonorm(pos,kstart,kend,pos) 
+    negD2DicLis=sq.getMulCount_nonorm(neg,kstart,kend,neg)
     
     
     posweightLis=[]

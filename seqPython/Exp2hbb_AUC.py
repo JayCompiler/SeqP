@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jan 11 16:53:18 2019
+Created on Tue Jan 15 20:47:08 2019
 
 @author: 51164
 """
@@ -22,7 +22,9 @@ def getSim(Lis):
 if __name__=="__main__":
     rd=ReadData.ReadData()
 #    datasets,pos,neg=rd.getData2("fly_blastoderm")
-    name="human_muscle"
+#    name="human_muscle"
+    name="HBB"
+
 #    name="pns"
     datasets,pos,neg=rd.getData2(name)
     print(name)
@@ -49,8 +51,8 @@ if __name__=="__main__":
     print("kstart=",kstart," kend=",kend)
     start = time.process_time()
     ## 计算MulD2特征
-    posD2DicLis=sq.getMulCount(pos,kstart,kend,pos) 
-    negD2DicLis=sq.getMulCount(neg,kstart,kend,neg)
+    posD2DicLis=sq.getMulCount_suf(pos,kstart,kend,pos) 
+    negD2DicLis=sq.getMulCount_suf(neg,kstart,kend,neg)
     
     
     posweightLis=[]
@@ -116,8 +118,8 @@ if __name__=="__main__":
         start = time.process_time()
         ## 计算MulD2特征
         start1=time.process_time()
-        posD2Lis=sq.getD2SMulCount_pre(pos,kstart,kend,r,flag,kmer_propos) 
-        negD2Lis=sq.getD2SMulCount_pre(neg,kstart,kend,r,flag,kmer_proneg)
+        posD2Lis=sq.getD2SMulCount_nonorm(pos,kstart,kend,r,flag,kmer_propos) 
+        negD2Lis=sq.getD2SMulCount_nonorm(neg,kstart,kend,r,flag,kmer_proneg)
         end1=time.process_time()
         print("特征计算时间",(end1-start1))
         ## 构成基因对,并设置标识

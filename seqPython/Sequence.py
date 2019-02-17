@@ -131,20 +131,20 @@ class Sequence:
      
          # 获取多个k 的频数 时间复杂度 为O((kend-kstart)*mn) 不标准化, 最后norm
     def getMulCount_nonorm(self,seqLis,kstart,kend,sequences):
-         kmerset,dic=self.getSeqKerSet(sequences,kstart)
-         countLis,count=self.getSeqCount(seqLis,kstart,dic)
+        kmerset,dic=self.getSeqKerSet(sequences,kstart)
+        countLis,count=self.getSeqCount(seqLis,kstart,dic)
          ## 时间复杂度为O(mn)
 #         for i in range(len(countLis)):
 #             countLis[i]=self.normdata(countLis[i])
              
-         for k in range(kstart+1,kend+1):
+        for k in range(kstart+1,kend+1):
             kmerset,dic=self.getSeqKerSet(sequences,k)
             tmpcountLis,count=self.getSeqCount(seqLis,k,dic)
 #            for i in range(len(tmpcountLis)):
 #                tmpcountLis[i]=self.normdata(tmpcountLis[i])
-            for i in range(len(countLis)):
-                countLis[i]=dict(countLis[i],**(tmpcountLis[i]))
-         return countLis
+        for i in range(len(countLis)):
+            countLis[i]=dict(countLis[i],**(tmpcountLis[i]))
+        return countLis
      
          # 获取多个k 的频数 时间复杂度 为O((kend-kstart)*mn) 不标准化, 最后norm
     def getMulCount_suf(self,seqLis,kstart,kend,sequences):
