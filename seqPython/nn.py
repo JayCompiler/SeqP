@@ -39,7 +39,9 @@ def add_layer(inputs,in_size,out_size,activation_function=None):
 
 if __name__=="__main__":
     rd=ReadData.ReadData()
-    name="muscle"
+#    name="muscle"
+#    name="fly_blastoderm"
+    name="pns"
     datasets,pos,neg=rd.getData2(name)
     print("----------------------数据集：",name,"-------------------")
     Sim=Similarity.Similarity()
@@ -100,10 +102,15 @@ if __name__=="__main__":
     preNum=len(pair[0])
     sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
     pair=sel.fit_transform(pair)
-    #2)单变量特征选择
-    X_new = SelectKBest(chi2, k=2).fit_transform(pair, label)
     nexNum=len(pair[0])
-    print("特征选择降维：",preNum-nexNum)
+    print("方差特征选择降维：",preNum-nexNum)
+    #2)单变量特征选择
+    X_new = SelectKBest(chi2, k=200).fit_transform(pair, label)
+    pair=X_new
+    nex2Num=len(pair[0])
+    print("单一变量特征选择降维：",nexNum-nex2Num)
+    
+
     ## 划分训练集
     x_train,x_test,y_train,y_test = train_test_split(pair,label,test_size=0.2,random_state=0)
 
@@ -120,9 +127,9 @@ if __name__=="__main__":
     
     
     ## 隐含层
-    l1=add_layer(xs,len(x_train[0]),100,activation_function=tf.nn.softplus)
+    l1=add_layer(xs,len(x_train[0]),300,activation_function=tf.nn.softplus)
     ## 输出层
-    prediction =add_layer(l1,100,1,activation_function=tf.nn.sigmoid)
+    prediction =add_layer(l1,300,1,activation_function=tf.nn.sigmoid)
     
     loss =tf.reduce_mean(tf.reduce_sum(tf.square(ys-prediction),
                         reduction_indices=[1]))
@@ -130,7 +137,7 @@ if __name__=="__main__":
     ## 计算auc
     auc,op= tf.metrics.auc(y_train,prediction)
 
-    train_step= tf.train.GradientDescentOptimizer(0.3).minimize(loss)
+    train_step= tf.train.GradientDescentOptimizer(0.5).minimize(loss)
     
     init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 #    sess.run(init)
@@ -140,9 +147,9 @@ if __name__=="__main__":
     sess.run(init)
     
     
-    for i in range(30000):
+    for i in range(1000):
         sess.run(train_step,feed_dict={xs:x_train,ys:y_train})
-        if i%200==0:
+        if i%20==0:
             prediction=sess.run(op,feed_dict={xs:x_train,ys:y_train})
             prediction_value=sess.run(auc,feed_dict={xs:x_train,ys:y_train})
             print("第",i,"次训练auc结果",prediction_value)
